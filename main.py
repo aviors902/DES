@@ -146,6 +146,8 @@ def main():
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
+        print("key: ", operation_key, " - size: ", len(operation_key))\
+        
 
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_inputs = binary_xor(old_Right, operation_key)
@@ -165,7 +167,7 @@ def main():
         print("sbox output: ", sbox_output, " Size: ", len(sbox_output))
         new_Right = binary_xor(old_Left, sbox_output)
 
-        # Resetting variables for the loop to iterate again.
+        # Update old_Right for the next iteration
         old_Left = old_Right
         old_Right = new_Right
 
