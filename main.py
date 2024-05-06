@@ -141,17 +141,22 @@ def main():
     d1 = permute(original_Key, perm_choice01_D0)
 
     for n in range(1, 16):
+        #Debugging Print statement - Just used to indicate which iteration is being performed
         print(n)
+
+        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
-        print("key: ", operation_key, " - size: ", len(operation_key))\
+        print("key: ", operation_key, " - size: ", len(operation_key))
         
         
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_inputs = binary_xor(old_Right, operation_key)
         sbox_inputs = sbox_inputs.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
+
+        # Debugging print statement
         print("sbox inputs: ", sbox_inputs, " - size: ", len(sbox_inputs))
 
         sbox_output_1 = sbox(sbox_1, sbox_inputs[:6])
@@ -162,9 +167,10 @@ def main():
         sbox_output_6 = sbox(sbox_6, sbox_inputs[30:36])
         sbox_output_7 = sbox(sbox_7, sbox_inputs[36:42])
         sbox_output_8 = sbox(sbox_8, sbox_inputs[42:])
-
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
+        # Debugging print statement
         print("sbox output: ", sbox_output, " Size: ", len(sbox_output))
+        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the output from the sbox function
         new_Right = binary_xor(old_Left, sbox_output)
 
         # Update old_Right for the next iteration
