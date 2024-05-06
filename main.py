@@ -140,15 +140,15 @@ def main():
     c1 = permute(original_Key, perm_choice01_C0)
     d1 = permute(original_Key, perm_choice01_D0)
 
-    for n in range(1, 17):
+    for n in range(1, 16):
         print(n)
-
+        new_Left = old_Right
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
         print("key: ", operation_key, " - size: ", len(operation_key))\
         
-
+        
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_inputs = binary_xor(old_Right, operation_key)
         sbox_inputs = sbox_inputs.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
@@ -168,7 +168,7 @@ def main():
         new_Right = binary_xor(old_Left, sbox_output)
 
         # Update old_Right for the next iteration
-        old_Left = old_Right
+        old_Left = new_Left
         old_Right = new_Right
 
 
