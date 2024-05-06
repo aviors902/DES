@@ -26,11 +26,10 @@ def rotate(text, v):
 
 # A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
 def sbox(sbox_array, coordinate):
-    # Ensure sbox_inputs has at least 48 characters by padding with zeros
-    sbox_inputs = coordinate.zfill(48)
-    row = int(sbox_inputs[0] + sbox_inputs[5], 2)  # Convert binary row coordinate to integer
-    column = int(sbox_inputs[1:5], 2)  # Convert binary column coordinate to integer
-    return format(sbox_array[row][column], '04b')  # Return result as 4-bit binary string
+    sbox_inputs = coordinate.zfill(48)                  # Ensure sbox_inputs has at least 48 characters by padding with zeros
+    row = int(sbox_inputs[0] + sbox_inputs[5], 2)       # Convert binary row coordinate to integer
+    column = int(sbox_inputs[1:5], 2)                   # Convert binary column coordinate to integer
+    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string
 
 
 # A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
@@ -38,15 +37,10 @@ def binary_xor(bin_str1, bin_str2):
     # Convert binary strings to integers
     int_val1 = int(bin_str1, 2)
     int_val2 = int(bin_str2, 2)
-    # Perform bitwise XOR operation
-    result = int_val1 ^ int_val2
-    # Convert result back to binary string
-    result_bin_str = bin(result)[2:]  # Remove '0b' prefix
-    # Pad with zeros to ensure the length matches the longer input string
+    result = int_val1 ^ int_val2                        # Perform bitwise XOR operation
+    result_bin_str = format(result, 'b')                    # Convert result back to binary string
     max_len = max(len(bin_str1), len(bin_str2))
-    result_bin_str = result_bin_str.zfill(max_len)
-    # Convert result back to binary string
-    result_bin_str = format(result, 'b')
+    result_bin_str = result_bin_str.zfill(max_len)      # Pad with zeros to ensure the length matches the longer input string    
     return result_bin_str
 
 # The Initial Permutation order for the plaintext
