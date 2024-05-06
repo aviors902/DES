@@ -147,20 +147,20 @@ def main():
         
         
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
-        sbox_inputs = binary_xor(old_Right, operation_key)
-        sbox_inputs = sbox_inputs.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
+        sbox_input = binary_xor(old_Right, operation_key)
+        sbox_input = sbox_input.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
 
         # Debugging print statement
-        print("sbox inputs: ", sbox_inputs, " - size: ", len(sbox_inputs))
+        print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))
 
-        sbox_output_1 = sbox(sbox_1, sbox_inputs[:6])
-        sbox_output_2 = sbox(sbox_2, sbox_inputs[6:12])
-        sbox_output_3 = sbox(sbox_3, sbox_inputs[12:18])
-        sbox_output_4 = sbox(sbox_4, sbox_inputs[18:24])
-        sbox_output_5 = sbox(sbox_5, sbox_inputs[24:30])
-        sbox_output_6 = sbox(sbox_6, sbox_inputs[30:36])
-        sbox_output_7 = sbox(sbox_7, sbox_inputs[36:42])
-        sbox_output_8 = sbox(sbox_8, sbox_inputs[42:])
+        sbox_output_1 = sbox(sbox_1, sbox_input[:6])
+        sbox_output_2 = sbox(sbox_2, sbox_input[6:12])
+        sbox_output_3 = sbox(sbox_3, sbox_input[12:18])
+        sbox_output_4 = sbox(sbox_4, sbox_input[18:24])
+        sbox_output_5 = sbox(sbox_5, sbox_input[24:30])
+        sbox_output_6 = sbox(sbox_6, sbox_input[30:36])
+        sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
+        sbox_output_8 = sbox(sbox_8, sbox_input[42:])
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
         # Debugging print statement
         print("sbox output: ", sbox_output, " Size: ", len(sbox_output))
