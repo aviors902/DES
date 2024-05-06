@@ -34,11 +34,11 @@ def sbox(sbox_array, coordinate):
 
 # A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
 def binary_xor(bin_str1, bin_str2):
-    # Convert binary strings to integers
-    int_val1 = int(bin_str1, 2)
-    int_val2 = int(bin_str2, 2)
-    result = int_val1 ^ int_val2                        # Perform bitwise XOR operation
-    result_bin_str = format(result, 'b')                    # Convert result back to binary string
+    # Convert strings to binary
+    bin_val1 = int(bin_str1, 2)
+    bin_val2 = int(bin_str2, 2)
+    result = bin_val1 ^ bin_val2                        # Perform bitwise XOR operation
+    result_bin_str = format(result, 'b')                # Convert result back to binary string
     max_len = max(len(bin_str1), len(bin_str2))
     result_bin_str = result_bin_str.zfill(max_len)      # Pad with zeros to ensure the length matches the longer input string    
     return result_bin_str
