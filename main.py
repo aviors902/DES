@@ -26,6 +26,30 @@ def rotate(text, v):
     text = text[v:]
     return text
 
+# A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
+def sbox(sbox_array, coordinate):
+    row = coordinate[0]+coordinate[5]
+    column = coordinate[1:4]
+    row = int(row, 2)
+    column = int(column, 2)
+    return sbox[row][column]
+
+# A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
+def binary_xor(bin_str1, bin_str2):
+    # Convert binary strings to integers
+    int_val1 = int(bin_str1, 2)
+    int_val2 = int(bin_str2, 2)
+    # Perform bitwise XOR operation
+    result = int_val1 ^ int_val2
+    # Convert result back to binary string
+    result_bin_str = bin(result)[2:]  # Remove '0b' prefix
+    # Pad with zeros to ensure the length matches the longer input string
+    max_len = max(len(bin_str1), len(bin_str2))
+    result_bin_str = result_bin_str.zfill(max_len)
+    # Convert result back to binary string
+    result_bin_str = format(result, 'b')
+    return result_bin_str
+
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # The Final Permutation order for the plaintext
