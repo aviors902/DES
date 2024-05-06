@@ -22,17 +22,16 @@ def permute(key, permutation):
 
 # A function which shifts all bits in a key to the left by an increment of v, and the first v bits go to the end of the queue
 def rotate(text, v):
-    text += text[:v]
-    text = text[v:]
-    return text
+    return text[v:] + text[:v]
 
 # A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
 def sbox(sbox_array, coordinate):
-    row = coordinate[0]+coordinate[5]
-    column = coordinate[1:4]
-    row = int(row, 2)
-    column = int(column, 2)
-    return sbox_array[row][column]
+    # Ensure sbox_inputs has at least 48 characters by padding with zeros
+    sbox_inputs = coordinate.zfill(48)
+    row = int(sbox_inputs[0] + sbox_inputs[5], 2)  # Convert binary row coordinate to integer
+    column = int(sbox_inputs[1:5], 2)  # Convert binary column coordinate to integer
+    return format(sbox_array[row][column], '04b')  # Return result as 4-bit binary string
+
 
 # A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
 def binary_xor(bin_str1, bin_str2):
@@ -48,7 +47,6 @@ def binary_xor(bin_str1, bin_str2):
     result_bin_str = result_bin_str.zfill(max_len)
     # Convert result back to binary string
     result_bin_str = format(result, 'b')
-    print(result_bin_str)
     return result_bin_str
 
 # The Initial Permutation order for the plaintext
@@ -56,7 +54,7 @@ IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 
 # The Final Permutation order for the plaintext
 FP = [40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25]
 #The Schedule of Left-Shifts for Key Permutation
-shifts = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
+key_shifts = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 # Master Key Permutation choices for their first permutations. The master key gets split into 2 keys: C0 and D0
 perm_choice01_C0 = [57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36]
 perm_choice01_D0 = [63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4]
@@ -131,36 +129,45 @@ def main():
     if len(plaintext) % 8 != 0:
         plaintext += "0"*(8-len(plaintext) % 8)
 
-    # The initial encryption Key
-    original_Key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    original_Key = original_Key.replace(" ", "")
-
     # Split the plaintext into left and right halves
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
-    c0 = permute(original_Key, perm_choice01_C0)
-    d0 = permute(original_Key, perm_choice01_D0)
 
-    c1 = rotate(c0, 1)
-    d1 = rotate(d0, 1)
+     # The initial encryption Key
+    original_Key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+    original_Key = original_Key.replace(" ", "")
+    c1 = permute(original_Key, perm_choice01_C0)
+    d1 = permute(original_Key, perm_choice01_D0)
 
-    operation_key = permute((c1+d1), perm_choice02)
     for n in range(1, 17):
-        # Permuting Right based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
+        print(n)
+
+        c1 = rotate(c1, key_shifts[n-1])
+        d1 = rotate(d1, key_shifts[n-1])
+        operation_key = permute((c1+d1), perm_choice02)
+
+        # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_inputs = binary_xor(old_Right, operation_key)
-        sbox_output_1 = sbox(sbox_1, sbox_inputs[0:6])
+        sbox_inputs = sbox_inputs.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
+        print("sbox inputs: ", sbox_inputs, " - size: ", len(sbox_inputs))
+
+        sbox_output_1 = sbox(sbox_1, sbox_inputs[:6])
         sbox_output_2 = sbox(sbox_2, sbox_inputs[6:12])
         sbox_output_3 = sbox(sbox_3, sbox_inputs[12:18])
         sbox_output_4 = sbox(sbox_4, sbox_inputs[18:24])
         sbox_output_5 = sbox(sbox_5, sbox_inputs[24:30])
         sbox_output_6 = sbox(sbox_6, sbox_inputs[30:36])
         sbox_output_7 = sbox(sbox_7, sbox_inputs[36:42])
-        sbox_output_8 = sbox(sbox_8, sbox_inputs[42:48])
+        sbox_output_8 = sbox(sbox_8, sbox_inputs[42:])
+
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
+        print("sbox output: ", sbox_output, " Size: ", len(sbox_output))
         new_Right = binary_xor(old_Left, sbox_output)
-        # Resetting variables for the loop to iterate agian.
-        old_Left = new_Right
+
+        # Resetting variables for the loop to iterate again.
+        old_Left = old_Right
         old_Right = new_Right
+
 
 
 
