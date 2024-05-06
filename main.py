@@ -135,20 +135,32 @@ def main():
     original_Key = original_Key.replace(" ", "")
 
     # Split the plaintext into left and right halves
-    plaintext_left, plaintext_right = split(plaintext)
-    ciphertext1 = permute(plaintext, IP)
-    l0, r0 = split(ciphertext1)
-
-
+    ciphertext = permute(plaintext, IP)
+    left, right = split(ciphertext)
     c0 = permute(original_Key, perm_choice01_C0)
     d0 = permute(original_Key, perm_choice01_D0)
 
     c1 = rotate(c0, 1)
     d1 = rotate(d0, 1)
 
-    k1 = permute((c1+d1), perm_choice02)
-    print(k1)
-    print(len(k1))
+    operation_key = permute((c1+d1), perm_choice02)
+
+    for n in range(1, 17):
+        # Permuting Right based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
+        sbox_inputs = binary_xor(right, operation_key)
+        sbox_output_1 = sbox(sbox_1, sbox_inputs[0:5])
+        sbox_output_2 = sbox(sbox_2, sbox_inputs[6:11])
+        sbox_output_3 = sbox(sbox_3, sbox_inputs[12:17])
+        sbox_output_4 = sbox(sbox_4, sbox_inputs[18:23])
+        sbox_output_5 = sbox(sbox_5, sbox_inputs[24:29])
+        sbox_output_6 = sbox(sbox_6, sbox_inputs[30:35])
+        sbox_output_7 = sbox(sbox_7, sbox_inputs[36:41])
+        sbox_output_8 = sbox(sbox_8, sbox_inputs[41:47])
+        sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
+        new_Right = binary_xor(left, sbox_output)
+        right = new_Right
+        left = new_Left
+
 
 if __name__ == "__main__":
     main()
