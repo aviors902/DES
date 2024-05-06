@@ -141,7 +141,7 @@ def main():
 
     for n in range(1, 17):
         print(n)
-
+        
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
@@ -167,9 +167,6 @@ def main():
         # Resetting variables for the loop to iterate again.
         old_Left = old_Right
         old_Right = new_Right
-
-
-
 
 
 if __name__ == "__main__":
