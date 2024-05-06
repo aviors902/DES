@@ -48,6 +48,7 @@ def binary_xor(bin_str1, bin_str2):
     result_bin_str = result_bin_str.zfill(max_len)
     # Convert result back to binary string
     result_bin_str = format(result, 'b')
+    print(result_bin_str)
     return result_bin_str
 
 # The Initial Permutation order for the plaintext
@@ -136,7 +137,7 @@ def main():
 
     # Split the plaintext into left and right halves
     ciphertext = permute(plaintext, IP)
-    left, right = split(ciphertext)
+    old_Left, old_Right = split(ciphertext)
     c0 = permute(original_Key, perm_choice01_C0)
     d0 = permute(original_Key, perm_choice01_D0)
 
@@ -144,22 +145,24 @@ def main():
     d1 = rotate(d0, 1)
 
     operation_key = permute((c1+d1), perm_choice02)
-
     for n in range(1, 17):
         # Permuting Right based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
-        sbox_inputs = binary_xor(right, operation_key)
-        sbox_output_1 = sbox(sbox_1, sbox_inputs[0:5])
-        sbox_output_2 = sbox(sbox_2, sbox_inputs[6:11])
-        sbox_output_3 = sbox(sbox_3, sbox_inputs[12:17])
-        sbox_output_4 = sbox(sbox_4, sbox_inputs[18:23])
-        sbox_output_5 = sbox(sbox_5, sbox_inputs[24:29])
-        sbox_output_6 = sbox(sbox_6, sbox_inputs[30:35])
-        sbox_output_7 = sbox(sbox_7, sbox_inputs[36:41])
-        sbox_output_8 = sbox(sbox_8, sbox_inputs[41:47])
+        sbox_inputs = binary_xor(old_Right, operation_key)
+        sbox_output_1 = sbox(sbox_1, sbox_inputs[0:6])
+        sbox_output_2 = sbox(sbox_2, sbox_inputs[7:12])
+        sbox_output_3 = sbox(sbox_3, sbox_inputs[13:18])
+        sbox_output_4 = sbox(sbox_4, sbox_inputs[19:24])
+        sbox_output_5 = sbox(sbox_5, sbox_inputs[25:30])
+        sbox_output_6 = sbox(sbox_6, sbox_inputs[31:36])
+        sbox_output_7 = sbox(sbox_7, sbox_inputs[37:42])
+        sbox_output_8 = sbox(sbox_8, sbox_inputs[43:48])
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
-        new_Right = binary_xor(left, sbox_output)
-        right = new_Right
-        left = new_Left
+        new_Right = binary_xor(old_Left, sbox_output)
+        # Resetting variables for the loop to iterate agian.
+        old_Left = new_Right
+        old_Right = new_Right
+
+
 
 
 if __name__ == "__main__":
