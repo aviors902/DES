@@ -26,9 +26,8 @@ def rotate(text, v):
 
 # A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
 def sbox(sbox_array, coordinate):
-    sbox_inputs = coordinate.zfill(48)                  # Ensure sbox_inputs has at least 48 characters by padding with zeros
-    row = int(sbox_inputs[0] + sbox_inputs[5], 2)       # Convert binary row coordinate to integer
-    column = int(sbox_inputs[1:5], 2)                   # Convert binary column coordinate to integer
+    row = int(coordinate[0] + coordinate[5], 2)       # Convert binary row coordinate to integer
+    column = int(cordinate[1:5], 2)                   # Convert binary column coordinate to integer
     return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string
 
 
