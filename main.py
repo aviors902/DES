@@ -27,8 +27,8 @@ def rotate(text, v):
 # A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
 def sbox(sbox_array, coordinate):
     row = int(coordinate[0] + coordinate[5], 2)       # Convert binary row coordinate to integer
-    column = int(cordinate[1:5], 2)                   # Convert binary column coordinate to integer
-    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string
+    column = int(coordinate[1:5], 2)                   # Convert binary column coordinate to integer
+    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string - '04b' indicating a 4-bit binary number
 
 
 # A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
@@ -133,7 +133,7 @@ def main():
     c1 = permute(original_Key, perm_choice01_C0)
     d1 = permute(original_Key, perm_choice01_D0)
 
-    for n in range(1, 16):
+    for n in range(1, 15):
         #Debugging Print statement - Just used to indicate which iteration is being performed
         print(n)
 
