@@ -6,42 +6,6 @@ About This Program:
 The purpose of this program is to demonstrate DES encryption and its implementation
 
 '''
-
-# A function to split blocks of text in half, returning the 2 halves as a tuple
-def split(text):
-    half_length = len(text) // 2
-    return text[:half_length], text[half_length:]
-
-# A function which will be called to permute keys based on the permutation order input
-def permute(key, permutation):
-    new_Key = ""
-    for bit in permutation:
-        current = bit-1
-        new_Key+= key[current]
-    return new_Key
-
-# A function which shifts all bits in a key to the left by an increment of v, and the first v bits go to the end of the queue
-def rotate(text, v):
-    return text[v:] + text[:v]
-
-# A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
-def sbox(sbox_array, coordinate):
-    row = int(coordinate[0] + coordinate[5], 2)       # Convert binary row coordinate to integer
-    column = int(coordinate[1:5], 2)                   # Convert binary column coordinate to integer
-    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string - '04b' indicating a 4-bit ('04') binary ('b') number
-
-
-# A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
-def binary_xor(bin_str1, bin_str2):
-    # Convert strings to binary
-    bin_val1 = int(bin_str1, 2)
-    bin_val2 = int(bin_str2, 2)
-    result = bin_val1 ^ bin_val2                        # Perform bitwise XOR operation
-    result_bin_str = format(result, 'b')                # Convert result back to binary string
-    max_len = max(len(bin_str1), len(bin_str2))
-    result_bin_str = result_bin_str.zfill(max_len)      # Pad the output with zeros to ensure the length matches the longer input string    
-    return result_bin_str
-
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # The Final Permutation order for the plaintext
@@ -115,8 +79,47 @@ sbox_8 = [
 
 permutation_p = [16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25]
 
+
+# A function to split blocks of text in half, returning the 2 halves as a tuple
+def split(text):
+    half_length = len(text) // 2
+    return text[:half_length], text[half_length:]
+
+
+# A function which will be called to permute keys based on the permutation order input
+def permute(key, permutation):
+    new_Key = ""
+    for bit in permutation:
+        current = bit-1
+        new_Key+= key[current]
+    return new_Key
+
+
+# A function which shifts all bits in a key to the left by an increment of v, and the first v bits go to the end of the queue
+def rotate(text, v):
+    return text[v:] + text[:v]
+
+
+# A quick method of returning the sbox desired value. The sbox argument is where the relevant 2d array sbox will be passed through, the coordinate is a 6 bit binary number which will be converted into 2d coordinates within the array
+def sbox(sbox_array, coordinate):
+    row = int(coordinate[0] + coordinate[5], 2)       # Convert binary row coordinate to integer
+    column = int(coordinate[1:5], 2)                   # Convert binary column coordinate to integer
+    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string - '04b' indicating a 4-bit ('04') binary ('b') number
+
+
+# A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
+def binary_xor(bin_str1, bin_str2):
+    # Convert strings to binary
+    bin_val1 = int(bin_str1, 2)
+    bin_val2 = int(bin_str2, 2)
+    result = bin_val1 ^ bin_val2                        # Perform bitwise XOR operation
+    result_bin_str = format(result, 'b')                # Convert result back to binary string
+    max_len = max(len(bin_str1), len(bin_str2))
+    result_bin_str = result_bin_str.zfill(max_len)      # Pad the output with zeros to ensure the length matches the longer input string    
+    return result_bin_str
+
+
 def encrypt(plaintext, key):
-    # The plaintext message "0123456789ABCDEF", converted from hex to binary
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(plaintext) % 8 != 0:
@@ -126,26 +129,25 @@ def encrypt(plaintext, key):
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
 
-    # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = key.replace(" ", "")
     c1 = permute(key, perm_choice01_C0)
     d1 = permute(key, perm_choice01_D0)
 
     for n in range(1, 17):
-        print(n)            #Debugging Print statement - Just used to indicate which iteration is being performed
+        #print(n)            #Debugging Print statement - Just used to indicate which iteration is being performed
 
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
-        print("key: ", operation_key, " - size: ", len(operation_key))                  # Debugging print statement
+        #print("key: ", operation_key, " - size: ", len(operation_key))                  # Debugging print statement
         
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_input = binary_xor(old_Right, operation_key)
         sbox_input = sbox_input.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
 
-        print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))                # Debugging print statement
+        #print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))                # Debugging print statement
 
         sbox_output_1 = sbox(sbox_1, sbox_input[:6])
         sbox_output_2 = sbox(sbox_2, sbox_input[6:12])
@@ -173,12 +175,25 @@ def encrypt(plaintext, key):
 
     final_permutation = permute(new_Right+new_Left, FP)
     # print("ENCRYPTED MESSAGE: ", final_permutation)   # A debugging Print statement
-    return final_permutation
+    return final_permutation, operation_key
+
+def decrypt(ciphertext, key):
+    print("Hello, World!")
+
+
+
+
+
 def main():
-    plaintext = "0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111"
+    # The plaintext message "0123456789ABCDEF", converted from hex to binary
+    plaintext = "01110100 01101000 01101001 01110011 01101001 01110011 01100001 01110100"
+
+    # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    message = encrypt(plaintext, key)
+
+    message, key = encrypt(plaintext, key)
     print(message)
+
 
 
 
