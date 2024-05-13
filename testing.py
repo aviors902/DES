@@ -172,13 +172,24 @@ def encrypt(plaintext, key):
         # Update old_Right for the next iteration
         old_Left = new_Left
         old_Right = new_Right
+    final_permutation = permute(new_Right + new_Left, FP)
+    readable_ciphertext = ""
+    for i in range(len(final_permutation)):
+        if i % 8 != 0 and i > 0:
+            readable_ciphertext += final_permutation[i]
+        else: 
+            readable_ciphertext += " " + final_permutation[i]
 
-    final_permutation = permute(new_Right+new_Left, FP)
     # print("ENCRYPTED MESSAGE: ", final_permutation)   # A debugging Print statement
-    return final_permutation, operation_key
+    return readable_ciphertext, operation_key
 
 def decrypt(ciphertext, key):
-    print("Hello, World!")
+    ciphertext = ciphertext.replace(" ", "")
+    if len(ciphertext) % 8 != 0:
+        ciphertext += "0"*(8-len(ciphertext) % 8)
+        
+    key = key.replace(" ", "")
+
 
 
 
@@ -191,7 +202,9 @@ def main():
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
-    message, key = encrypt(plaintext, key)
+    message, decryption_key = encrypt(plaintext, key)
+
+
     print(message)
 
 
