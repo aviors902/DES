@@ -187,7 +187,7 @@ def decrypt(ciphertext, key):
     ciphertext = ciphertext.replace(" ", "")
     if len(ciphertext) % 8 != 0:
         ciphertext += "0"*(8-len(ciphertext) % 8)
-        
+
     key = key.replace(" ", "")
 
 
@@ -197,7 +197,8 @@ def decrypt(ciphertext, key):
 
 def main():
     # The plaintext message "0123456789ABCDEF", converted from hex to binary
-    plaintext = "01110100 01101000 01101001 01110011 01101001 01110011 01100001 01110100"
+    #plaintext = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
+    plaintext = "00000000 01010100 01100101 01110011 01110100 01101001 01101110 01100111"
 
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
