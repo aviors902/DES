@@ -28,7 +28,7 @@ def rotate(text, v):
 def sbox(sbox_array, coordinate):
     row = int(coordinate[0] + coordinate[5], 2)       # Convert binary row coordinate to integer
     column = int(coordinate[1:5], 2)                   # Convert binary column coordinate to integer
-    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string - '04b' indicating a 4-bit binary number
+    return format(sbox_array[row][column], '04b')       # Return result as 4-bit binary string - '04b' indicating a 4-bit ('04') binary ('b') number
 
 
 # A binary xor function, converting the binary strings to integers, performing the xor operation and then returning the result
@@ -39,7 +39,7 @@ def binary_xor(bin_str1, bin_str2):
     result = bin_val1 ^ bin_val2                        # Perform bitwise XOR operation
     result_bin_str = format(result, 'b')                # Convert result back to binary string
     max_len = max(len(bin_str1), len(bin_str2))
-    result_bin_str = result_bin_str.zfill(max_len)      # Pad with zeros to ensure the length matches the longer input string    
+    result_bin_str = result_bin_str.zfill(max_len)      # Pad the output with zeros to ensure the length matches the longer input string    
     return result_bin_str
 
 # The Initial Permutation order for the plaintext
@@ -134,23 +134,20 @@ def main():
     d1 = permute(original_Key, perm_choice01_D0)
 
     for n in range(1, 15):
-        #Debugging Print statement - Just used to indicate which iteration is being performed
-        print(n)
+        print(n)            #Debugging Print statement - Just used to indicate which iteration is being performed
 
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         c1 = rotate(c1, key_shifts[n-1])
         d1 = rotate(d1, key_shifts[n-1])
         operation_key = permute((c1+d1), perm_choice02)
-        print("key: ", operation_key, " - size: ", len(operation_key))
-        
+        print("key: ", operation_key, " - size: ", len(operation_key))                  # Debugging print statement
         
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
         sbox_input = binary_xor(old_Right, operation_key)
         sbox_input = sbox_input.zfill(48)  # Ensure sbox_inputs is exactly 48 bits long
 
-        # Debugging print statement
-        print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))
+        print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))                # Debugging print statement
 
         sbox_output_1 = sbox(sbox_1, sbox_input[:6])
         sbox_output_2 = sbox(sbox_2, sbox_input[6:12])
@@ -161,8 +158,9 @@ def main():
         sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
         sbox_output_8 = sbox(sbox_8, sbox_input[42:])
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
-        # Debugging print statement
-        print("sbox output: ", sbox_output, " Size: ", len(sbox_output))
+        
+        print("sbox output: ", sbox_output, " Size: ", len(sbox_output))                # Debugging print statement
+
         # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the output from the sbox function
         new_Right = binary_xor(old_Left, sbox_output)
 
