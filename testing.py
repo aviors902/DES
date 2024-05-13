@@ -113,10 +113,10 @@ sbox_8 = [
     [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]
 ]
 
+permutation_p = [16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25]
 
 def main():
-    # The plaintext message "This is simply a test text to verify the code is working", converted to binary
-    #plaintext = "01010100 01101000 01101001 01110011 00100000 01101001 01110011 00100000 01110011 01101001 01101101 01110000 01101100 01111001 00100000 01100001 00100000 01110100 01100101 01110011 01110100 00100000 01110100 01100101 01111000 01110100 00100000 01110100 01101111 00100000 01110110 01100101 01110010 01101001 01100110 01111001 00100000 01110100 01101000 01100101 00100000 01100011 01101111 01100100 01100101 00100000 01101001 01110011 00100000 01110111 01101111 01110010 01101011 01101001 01101110 011001111"
+    # The plaintext message "0123456789ABCDEF", converted from hex to binary
     plaintext = "0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111"
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -127,13 +127,13 @@ def main():
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
 
-     # The initial encryption Key
+    # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     original_Key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
     original_Key = original_Key.replace(" ", "")
     c1 = permute(original_Key, perm_choice01_C0)
     d1 = permute(original_Key, perm_choice01_D0)
 
-    for n in range(1, 15):
+    for n in range(1, 17):
         print(n)            #Debugging Print statement - Just used to indicate which iteration is being performed
 
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
@@ -158,16 +158,23 @@ def main():
         sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
         sbox_output_8 = sbox(sbox_8, sbox_input[42:])
         sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
-        
-        print("sbox output: ", sbox_output, " Size: ", len(sbox_output))                # Debugging print statement
-
-        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the output from the sbox function
-        new_Right = binary_xor(old_Left, sbox_output)
-
+        #p is the final permutation of the right hand side before XORing it with the old Left hand side
+        p = permute(sbox_output, permutation_p)
+        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the permuted s-box function output
+        new_Right = binary_xor(old_Left, p)
+        '''print()                              # Several Print statements, all for debugging purposes
+        print("Permutation p: ", p)
+        print("Old Left:      ", old_Left)
+        print("XOR product:   ", new_Right)
+        print()
+        print("New Left: ", new_Left)        
+        print("------------------------") '''
         # Update old_Right for the next iteration
         old_Left = new_Left
         old_Right = new_Right
 
+    final_permutation = permute(new_Right+new_Left, FP)
+    print("ENCRYPTED MESSAGE: ", final_permutation)
 
 if __name__ == "__main__":
     main()
