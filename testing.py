@@ -115,9 +115,8 @@ sbox_8 = [
 
 permutation_p = [16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25]
 
-def main():
+def encrypt(plaintext, key):
     # The plaintext message "0123456789ABCDEF", converted from hex to binary
-    plaintext = "0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111"
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(plaintext) % 8 != 0:
@@ -128,10 +127,9 @@ def main():
     old_Left, old_Right = split(ciphertext)
 
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
-    original_Key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    original_Key = original_Key.replace(" ", "")
-    c1 = permute(original_Key, perm_choice01_C0)
-    d1 = permute(original_Key, perm_choice01_D0)
+    key = key.replace(" ", "")
+    c1 = permute(key, perm_choice01_C0)
+    d1 = permute(key, perm_choice01_D0)
 
     for n in range(1, 17):
         print(n)            #Debugging Print statement - Just used to indicate which iteration is being performed
@@ -174,7 +172,15 @@ def main():
         old_Right = new_Right
 
     final_permutation = permute(new_Right+new_Left, FP)
-    print("ENCRYPTED MESSAGE: ", final_permutation)
+    # print("ENCRYPTED MESSAGE: ", final_permutation)   # A debugging Print statement
+    return final_permutation
+def main():
+    plaintext = "0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111"
+    key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+    message = encrypt(plaintext, key)
+    print(message)
+
+
 
 if __name__ == "__main__":
     main()
