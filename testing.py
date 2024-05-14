@@ -94,6 +94,7 @@ def sbox_Permutation(sbox_input):
     sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
     sbox_output_8 = sbox(sbox_8, sbox_input[42:])
     sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
+    return sbox_output
 
 
 # A function to split blocks of text in half, returning the 2 halves as a tuple
@@ -139,7 +140,7 @@ def binary_xor(bin_str1, bin_str2):
     return result_bin_str
 
 
-def encrypt(plaintext, key):
+def DES0(plaintext, key):
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(plaintext) % 8 != 0:
@@ -177,7 +178,6 @@ def encrypt(plaintext, key):
         old_Left = new_Left
         old_Right = new_Right
 
-
     # After 16 rounds of permutations, the final permutation FP is performed
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -190,23 +190,33 @@ def encrypt(plaintext, key):
 
     return readable_ciphertext, operation_key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
-
-def decrypt(ciphertext, decryption_key):  
+# The decryption process is identical to the encryption process, but reversed
+def decryptDES0(ciphertext, decryption_key):  
     ciphertext = ciphertext.replace(" ", "")                                            # Removing white space from the ciphertext and padding it to ensure it is exactly a multople of 8 bits long
     if len(ciphertext) % 8 != 0:
         ciphertext += "0"*(8-len(ciphertext) % 8)
+
+    # FP is an inverse of itself, so the first permutation made is the inverse of the final permutation made when encrypting
     ciphertext = permute(ciphertext, FP)
-    new_Left, new_Right = split(ciphertext)
+    # The Ciphertext is split into its left half and right half so we can reverse the Fiestel process
     old_Left, old_Right = split(ciphertext)
+    # The decryption key is premuted with the inverse of perm_choice02 which is used during the encryption process
     operation_Key = permute(decryption_key, perm_choice_inverse02)
-
+    # The Fiestel Blocks are now being reversed. There are 16 iterations to do
     for d in range(1, 17):
+        # Each step taken in the Fiestel Blocks must be reversed. The decryption process is just reversing the encryption process
+        new_Right = old_Left
+        #
+        new_Left = permute(old_Right, permutation_p)
 
-        new_Right = permute(old_Right, permutation_p)
-        new_Right = permute(new_Right, expansion)
-        sbox_output = sbox_Permutation(new_Right)
+        new_Left = permute(new_Left, expansion)
 
-        new_Right = binary_xor(sbox_output, old_Left)
+        sbox_output = sbox_Permutation(new_Left)
+
+        new_Left = binary_xor(sbox_output, old_Right)
+
+
+
         old_Right = new_Right
         old_Left = new_Left
 
@@ -232,7 +242,7 @@ def main():
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
-    message, decryption_key = encrypt(plaintext, key)
+    message, decryption_key = DES0(plaintext, key)
 
 
     print(message)
