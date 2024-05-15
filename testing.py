@@ -213,10 +213,13 @@ def decryptDES0(ciphertext, decryption_key):
     print("Checkpoint 3")
     print(len(decryption_key))
     print(len(perm_choice_inverse02))
-    operation_Key = permute(decryption_key, perm_choice_inverse02)
+    c0, d0 = split(decryption_key)
+
     # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
     for d in range(1, 17):
+        operation_Key = permute(c0+d0, perm_choice_inverse02)    
         new_Left = old_Right
+
         print("Checkpoint ", d+3)
         old_Right = permute(old_Right, expansion)
         sbox_input = binary_xor(old_Right, operation_Key)
@@ -226,10 +229,8 @@ def decryptDES0(ciphertext, decryption_key):
         old_Left = new_Left
         old_Right = new_Right
 
-        c0, d0 = split(decryption_key)
         c0 = rotate(c0, key_shifts[d-1], 'r')
         d0 = rotate(d0, key_shifts[d-1], 'r')
-        decryption_key = permute(c0+d0, perm_choice_inverse02)    
 
 
     plaintext = permute(new_Left+new_Right, IP_Inverse)
