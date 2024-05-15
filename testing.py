@@ -171,12 +171,9 @@ def encryptDES0(plaintext, key):
 
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        #print(n)                                                                        Debugging Print statement - Just used to indicate which iteration is being performed
-
+        #print(n)                                                                       # Debugging Print statement - Just used to indicate which iteration is being performed
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
-
-        #print("key: ", operation_key, " - size: ", len(operation_key))                 # Debugging print statement
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
@@ -192,20 +189,30 @@ def encryptDES0(plaintext, key):
         old_Left = new_Left
         old_Right = new_Right
 
-    # After 16 rounds of permutations, the final permutation FP is performed
+    
+    # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
-    # A small loop just breaking the binary string into 8-bit sections
+    # A small loop just breaking the binary string into 8-bit sections for easier reading
     for i in range(len(final_permutation)):
         if i % 8 != 0 and i > 0:
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    
+
+    # Converting the 56 bit key into a 64 bit key by adding an odd-parity-bit after every 7th bit (bit 8 will be the parity bit)
     no_Parity_Key = c1+d1
     parity_Key = insert_odd_parity_bit(no_Parity_Key)
+    readable_Key = ""
+    # Breaking the key into readable 8-bit chunks
+    for j in range(0, 64):
+        if j % 8 != 0 and j > 0:
+            readable_Key += parity_Key[j]
+        else: 
+            readable_Key += " " + parity_Key[j]
 
-    return readable_ciphertext, parity_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+
+    return readable_ciphertext, readable_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 # The decryption process for standard DES encryption
 def decryptDES0(ciphertext, key):
@@ -221,22 +228,18 @@ def decryptDES0(ciphertext, key):
     key = key.replace(" ", "")
     c1 = permute(key, perm_choice01_C0)
     d1 = permute(key, perm_choice01_D0)
-  
+
     keys = [None] * 16
     for k in range(0, 16):
         c1 = rotate(c1, key_shifts[k], 'l')
         d1 = rotate(d1, key_shifts[k], 'l')
         key = permute((c1+d1), perm_choice02)
         keys[k] = key
-
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        #print(n)                                                                        Debugging Print statement - Just used to indicate which iteration is being performed
-
+        #print(n)                                                                       #Debugging Print statement - Just used to indicate which iteration is being performed
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
-
-        #print("key: ", operation_key, " - size: ", len(operation_key))                 # Debugging print statement
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
         # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
@@ -253,7 +256,7 @@ def decryptDES0(ciphertext, key):
         old_Right = new_Right
 
     # After 16 rounds of permutations, the final permutation FP is performed
-    final_permutation = permute(new_Right + new_Left, FP)
+    final_permutation = permute(new_Left + new_Right, IP_Inverse)
     readable_ciphertext = ""
     # A small loop just breaking the binary string into 8-bit sections
     for i in range(len(final_permutation)):
@@ -261,8 +264,19 @@ def decryptDES0(ciphertext, key):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
+    # Converting the 56 bit key into a 64 bit key by adding an odd-parity-bit after every 7th bit (bit 8 will be the parity bit)
+    no_Parity_Key = c1+d1
+    parity_Key = insert_odd_parity_bit(no_Parity_Key)
+    readable_Key = ""
+    # Breaking the key into readable 8-bit chunks
+    for j in range(0, 64):
+        if j % 8 != 0 and j > 0:
+            readable_Key += parity_Key[j]
+        else: 
+            readable_Key += " " + parity_Key[j]
 
-    return readable_ciphertext, operation_key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, readable_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+
 
 
 def main():
@@ -274,9 +288,12 @@ def main():
 
     ciphertext, decryption_key = encryptDES0(plaintext, key)
 
-    plaintext, OGKey = test(ciphertext, decryption_key)
-    print("Text: ", plaintext)
-    print("Key: ", OGKey)
+    decrypted_Text, OGKey = decryptDES0(ciphertext, decryption_key)
+    print("Plaintext:       ", plaintext)
+    print("Decrypted text: ", decrypted_Text)
+    print("Encryption Key:  ", key)
+    print("Decrypted Key:  ", OGKey)
+    print("Decryption Key: ", decryption_key)
 
 if __name__ == "__main__":
     main()
