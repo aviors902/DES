@@ -205,11 +205,14 @@ def decryptDES0(ciphertext, decryption_key):
     # FP is an inverse of itself, so the first permutation made is the inverse of the final permutation made when encrypting
     print("Checkpoint 1")
     ciphertext = permute(ciphertext, FP)
+
     # The Ciphertext is split into its left half and right half so we can reverse the Fiestel process
     print("Checkpoint 2")
     old_Left, old_Right = split(ciphertext)
     # The decryption key is premuted with the inverse of perm_choice02 which is used during the encryption process
     print("Checkpoint 3")
+    print(len(decryption_key))
+    print(len(perm_choice_inverse02))
     operation_Key = permute(decryption_key, perm_choice_inverse02)
     # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
     for d in range(1, 17):
