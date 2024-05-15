@@ -9,7 +9,7 @@ The purpose of this program is to demonstrate DES encryption and its implementat
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # Inverse Initial Permutation is used for the decryption process. It takes the encrypted message and arranges the bits into the same order they were placed during the very first encryption step
-IP_Inverse = inverse_IP = [40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41,9, 49, 17, 57, 25]
+IP_Inverse = [40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41,9, 49, 17, 57, 25]
 # The Final Permutation order for the plaintext
 FP = [40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25]
 # Permutation P is the permutation made at the end of each fiestel round
@@ -85,6 +85,7 @@ def sbox_Permutation(sbox_input):
         [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
         [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]
     ]
+
     sbox_output_1 = sbox(sbox_1, sbox_input[:6])
     sbox_output_2 = sbox(sbox_2, sbox_input[6:12])
     sbox_output_3 = sbox(sbox_3, sbox_input[12:18])
@@ -93,9 +94,8 @@ def sbox_Permutation(sbox_input):
     sbox_output_6 = sbox(sbox_6, sbox_input[30:36])
     sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
     sbox_output_8 = sbox(sbox_8, sbox_input[42:])
-    sbox_output = sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
-    return sbox_output
-
+    return sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
+    
 
 # A function to split blocks of text in half, returning the 2 halves as a tuple
 def split(text):
@@ -108,6 +108,7 @@ def permute(text, permutation):
     new_Text = ""
     for bit in permutation:
         new_Text += text[bit-1]
+        print(len(new_Text), " - ", new_Text)
     return new_Text
 
 
@@ -139,7 +140,7 @@ def binary_xor(bin_str1, bin_str2):
     return result_bin_str
 
 
-def DES0(plaintext, key):
+def encryptDES0(plaintext, key):
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(plaintext) % 8 != 0:
@@ -213,11 +214,13 @@ def decryptDES0(ciphertext, decryption_key):
     print("Checkpoint 3")
     print(len(decryption_key))
     print(len(perm_choice_inverse02))
+
     c0, d0 = split(decryption_key)
 
     # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
     for d in range(1, 17):
-        operation_Key = permute(c0+d0, perm_choice_inverse02)    
+        # c0 and d0 are split outside of the loop because for the first permutation there is no key shift, but every subsequent perm has a key shift
+        operation_Key = permute(c0+d0, perm_choice_inverse02)  
         new_Left = old_Right
 
         print("Checkpoint ", d+3)
@@ -248,7 +251,7 @@ def main():
 
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    ciphertext, decryption_key = DES0(plaintext, key)
+    ciphertext, decryption_key = encryptDES0(plaintext, key)
 
 
     plaintext, OGKey = decryptDES0(ciphertext, decryption_key)
