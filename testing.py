@@ -103,13 +103,12 @@ def split(text):
     return text[:half_length], text[half_length:]
 
 
-# A function which will be called to permute keys based on the permutation order input
-def permute(key, permutation):
-    new_Key = ""
+# A function which will be called to permute text based on the permutation order input
+def permute(text, permutation):
+    new_Text = ""
     for bit in permutation:
-        current = bit-1
-        new_Key+= key[current]
-    return new_Key
+        new_Text += text[bit-1]
+    return new_Text
 
 
 # A function which shifts all bits in a key to the direction specified by an increment of v
@@ -146,9 +145,16 @@ def DES0(plaintext, key):
     if len(plaintext) % 8 != 0:
         plaintext += "0"*(8-len(plaintext) % 8)
 
+    print("Length of plaintext before initial permutation:", len(plaintext))
+
     # Split the plaintext into left and right halves
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
+
+    print("Length of IP permutation order:", len(IP))
+
+
+
     key = key.replace(" ", "")
     c1 = permute(key, perm_choice01_C0)
     d1 = permute(key, perm_choice01_D0)
@@ -197,33 +203,30 @@ def decryptDES0(ciphertext, decryption_key):
         ciphertext += "0"*(8-len(ciphertext) % 8)
 
     # FP is an inverse of itself, so the first permutation made is the inverse of the final permutation made when encrypting
+    print("Checkpoint 1")
     ciphertext = permute(ciphertext, FP)
     # The Ciphertext is split into its left half and right half so we can reverse the Fiestel process
+    print("Checkpoint 2")
     old_Left, old_Right = split(ciphertext)
     # The decryption key is premuted with the inverse of perm_choice02 which is used during the encryption process
+    print("Checkpoint 3")
     operation_Key = permute(decryption_key, perm_choice_inverse02)
-    # The Fiestel Blocks are now being reversed. There are 16 iterations to do
+    # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
     for d in range(1, 17):
-        # Each step taken in the Fiestel Blocks must be reversed. The decryption process is just reversing the encryption process
-        new_Right = old_Left
-        #
-        new_Left = permute(old_Right, permutation_p)
-
-        new_Left = permute(new_Left, expansion)
-
-        sbox_output = sbox_Permutation(new_Left)
-
-        new_Left = binary_xor(sbox_output, old_Right)
-
-
-
-        old_Right = new_Right
+        new_Left = old_Right
+        print("Checkpoint ", d+3)
+        old_Right = permute(old_Right, expansion)
+        sbox_input = binary_xor(old_Right, operation_Key)
+        sbox_output = sbox_Permutation(sbox_input)
+        p = permute(sbox_output, permutation_p)
+        new_Right = binary_xor(old_Left, p)
         old_Left = new_Left
+        old_Right = new_Right
 
-        c0, d0 = split(operation_Key)
+        c0, d0 = split(decryption_key)
         c0 = rotate(c0, key_shifts[d-1], 'r')
         d0 = rotate(d0, key_shifts[d-1], 'r')
-        operation_Key = permute(c0+d0, perm_choice_inverse02)    
+        decryption_key = permute(c0+d0, perm_choice_inverse02)    
 
 
     plaintext = permute(new_Left+new_Right, IP_Inverse)
@@ -241,12 +244,17 @@ def main():
 
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+    ciphertext, decryption_key = DES0(plaintext, key)
 
-    message, decryption_key = DES0(plaintext, key)
 
+    plaintext, OGKey = decryptDES0(ciphertext, decryption_key)
 
-    print(message)
-    print("Decryption Key: ", decryption_key)
+'''
+    print("Plaintext:      ", plaintext, " - ", len(plaintext.replace(" ", "")))
+    print("Decryption Key: ", decryption_key, " - ", len(decryption_key))
+    print("Ciphertext : ",ciphertext, " - ", len(ciphertext.replace(" ", "")))
+    print("Key : ", decryption_key, " - ", len(decryption_key))
+'''
 
 
 if __name__ == "__main__":
