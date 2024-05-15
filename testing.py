@@ -83,7 +83,6 @@ def sbox_Permutation(sbox_input):
         [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
         [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]
     ]
-
     sbox_output_1 = sbox(sbox_1, sbox_input[:6])
     sbox_output_2 = sbox(sbox_2, sbox_input[6:12])
     sbox_output_3 = sbox(sbox_3, sbox_input[12:18])
@@ -93,7 +92,7 @@ def sbox_Permutation(sbox_input):
     sbox_output_7 = sbox(sbox_7, sbox_input[36:42])
     sbox_output_8 = sbox(sbox_8, sbox_input[42:])
     return sbox_output_1 + sbox_output_2 + sbox_output_3 + sbox_output_4 + sbox_output_5 + sbox_output_6 + sbox_output_7 + sbox_output_8
-    
+
 
 # A function to split blocks of text in half, returning the 2 halves as a tuple
 def split(text):
@@ -106,11 +105,6 @@ def permute(text, permutation):
     new_Text = ""
     for bit in permutation:
         new_Text += text[bit-1]
-<<<<<<< HEAD
-        print(len(new_Text), " - ", new_Text)
-=======
-        print(new_Text)
->>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
     return new_Text
 
 
@@ -141,6 +135,18 @@ def binary_xor(bin_str1, bin_str2):
     result_bin_str = result_bin_str.zfill(max_len)                                      # Pad the output with zeros to ensure the length matches the longer input string    
     return result_bin_str
 
+# A function used to turn a 56 bit key into a 64 bit key with odd-bit parity
+def insert_odd_parity_bit(key_56_bit):
+    def odd_parity(bits):
+        return '1' if bits.count('1') % 2 == 0 else '0'
+
+    key_64_bit = []
+    for i in range(0, 56, 7):
+        seven_bits = key_56_bit[i:i+7]
+        parity_bit = odd_parity(seven_bits)
+        key_64_bit.extend(seven_bits)
+        key_64_bit.append(parity_bit)
+    return ''.join(key_64_bit)
 
 def encryptDES0(plaintext, key):
     plaintext = plaintext.replace(" ", "")
@@ -148,29 +154,88 @@ def encryptDES0(plaintext, key):
     if len(plaintext) % 8 != 0:
         plaintext += "0"*(8-len(plaintext) % 8)
 
-    print("Length of plaintext before initial permutation:", len(plaintext))
-
     # Split the plaintext into left and right halves
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
 
-    print("Length of IP permutation order:", len(IP))
-
-
-
     key = key.replace(" ", "")
     c1 = permute(key, perm_choice01_C0)
     d1 = permute(key, perm_choice01_D0)
+  
+    keys = [None] * 16
+    for k in range(0, 16):
+        c1 = rotate(c1, key_shifts[k], 'l')
+        d1 = rotate(d1, key_shifts[k], 'l')
+        key = permute((c1+d1), perm_choice02)
+        keys[k] = key
 
     # This for loop is the 17 Fiestel rounds taken in DES encryption
-    for n in range(1, 17):
+    for operation_key in keys:
         #print(n)                                                                        Debugging Print statement - Just used to indicate which iteration is being performed
 
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
-        c1 = rotate(c1, key_shifts[n-1], 'l')
-        d1 = rotate(d1, key_shifts[n-1], 'l')
-        operation_key = permute((c1+d1), perm_choice02)
+
+        #print("key: ", operation_key, " - size: ", len(operation_key))                 # Debugging print statement
+        #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
+        old_Right = permute(old_Right, expansion)
+        # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
+        sbox_input = binary_xor(old_Right, operation_key)
+        #sbox_input = sbox_input.zfill(48)                                              # Ensure sbox_inputs is exactly 48 bits long
+        #print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))               # Debugging print statement
+        sbox_output = sbox_Permutation(sbox_input)
+        # p is the final permutation of the right hand side before XORing it with the old Left hand side
+        p = permute(sbox_output, permutation_p)
+        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the permuted s-box function output
+        new_Right = binary_xor(old_Left, p)
+        # Update all variables for the next iteration of the loop
+        old_Left = new_Left
+        old_Right = new_Right
+
+    # After 16 rounds of permutations, the final permutation FP is performed
+    final_permutation = permute(new_Right + new_Left, FP)
+    readable_ciphertext = ""
+    # A small loop just breaking the binary string into 8-bit sections
+    for i in range(len(final_permutation)):
+        if i % 8 != 0 and i > 0:
+            readable_ciphertext += final_permutation[i]
+        else: 
+            readable_ciphertext += " " + final_permutation[i]
+    
+    no_Parity_Key = c1+d1
+    parity_Key = insert_odd_parity_bit(no_Parity_Key)
+
+    return readable_ciphertext, parity_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+
+# The decryption process for standard DES encryption
+def decryptDES0(ciphertext, key):
+    ciphertext = ciphertext.replace(" ", "")
+    #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
+    if len(ciphertext) % 8 != 0:
+        ciphertext += "0"*(8-len(ciphertext) % 8)
+
+    # Split the ciphertext into left and right halves
+    ciphertext = permute(ciphertext, IP)
+    old_Left, old_Right = split(ciphertext)
+
+    key = key.replace(" ", "")
+    c1 = permute(key, perm_choice01_C0)
+    d1 = permute(key, perm_choice01_D0)
+  
+    keys = [None] * 16
+    for k in range(0, 16):
+        c1 = rotate(c1, key_shifts[k], 'l')
+        d1 = rotate(d1, key_shifts[k], 'l')
+        key = permute((c1+d1), perm_choice02)
+        keys[k] = key
+
+    # This for loop is the 17 Fiestel rounds taken in DES encryption
+    for operation_key in keys:
+        #print(n)                                                                        Debugging Print statement - Just used to indicate which iteration is being performed
+
+        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
+        new_Left = old_Right
+
         #print("key: ", operation_key, " - size: ", len(operation_key))                 # Debugging print statement
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
@@ -199,66 +264,6 @@ def encryptDES0(plaintext, key):
 
     return readable_ciphertext, operation_key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
-# The decryption process is identical to the encryption process, but reversed
-def decryptDES0(ciphertext, decryption_key):  
-    ciphertext = ciphertext.replace(" ", "")                                            # Removing white space from the ciphertext and padding it to ensure it is exactly a multople of 8 bits long
-    if len(ciphertext) % 8 != 0:
-        ciphertext += "0"*(8-len(ciphertext) % 8)
-
-    # FP is an inverse of itself, so the first permutation made is the inverse of the final permutation made when encrypting
-    
-    ciphertext = permute(ciphertext, FP)
-    print("Checkpoint 1 - Permute ciphertext, FP")   
-    # The Ciphertext is split into its left half and right half so we can reverse the Fiestel process
-    old_Left, old_Right = split(ciphertext)
-    print("Checkpoint 2 - Split Ciphertext")
-    # The decryption key is premuted with the inverse of perm_choice02 which is used during the encryption process
-<<<<<<< HEAD
-    print("Checkpoint 3")
-    print(len(decryption_key))
-    print(len(perm_choice_inverse02))
-
-=======
-    
-    print("Decryption Key Length: ", len(decryption_key))
-    print("Decryption Key perm:   ", len(perm_choice02))
->>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
-    c0, d0 = split(decryption_key)
-    print("Checkpoint 3 - Split Key")
-    # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
-    for d in range(1, 17):
-<<<<<<< HEAD
-        # c0 and d0 are split outside of the loop because for the first permutation there is no key shift, but every subsequent perm has a key shift
-        operation_Key = permute(c0+d0, perm_choice_inverse02)  
-=======
-        print("Checkpoint ", d+3, " - c0+d0 len = ", len(c0+d0))
-        print(c0+d0)
-        print(perm_choice02)
-        operation_Key = permute(c0+d0, perm_choice02)
->>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
-        new_Left = old_Right
-
-        print("Checkpoint ", d+4, " - Permute c/d0, permutation choice 2 inverse round ", d)
-        old_Right = permute(old_Right, expansion)
-        sbox_input = binary_xor(old_Right, operation_Key)
-        sbox_output = sbox_Permutation(sbox_input)
-        p = permute(sbox_output, permutation_p)
-        new_Right = binary_xor(old_Left, p)
-        old_Left = new_Left
-        old_Right = new_Right
-
-        c0 = rotate(c0, key_shifts[d-1], 'r')
-        d0 = rotate(d0, key_shifts[d-1], 'r')
-
-
-    plaintext = permute(new_Left+new_Right, IP_Inverse)
-    
-    
-    plaintext = ''
-    original_Key = permute(c0+d0, perm_choice_inverse01)
-    return plaintext, original_Key
-
-
 
 def main():
     # The plaintext message "0123456789ABCDEF", converted from hex to binary
@@ -266,18 +271,12 @@ def main():
 
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+
     ciphertext, decryption_key = encryptDES0(plaintext, key)
 
-
-    plaintext, OGKey = decryptDES0(ciphertext, decryption_key)
-
-'''
-    print("Plaintext:      ", plaintext, " - ", len(plaintext.replace(" ", "")))
-    print("Decryption Key: ", decryption_key, " - ", len(decryption_key))
-    print("Ciphertext : ",ciphertext, " - ", len(ciphertext.replace(" ", "")))
-    print("Key : ", decryption_key, " - ", len(decryption_key))
-'''
-
+    plaintext, OGKey = test(ciphertext, decryption_key)
+    print("Text: ", plaintext)
+    print("Key: ", OGKey)
 
 if __name__ == "__main__":
     main()
