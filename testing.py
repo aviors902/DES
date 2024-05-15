@@ -23,8 +23,6 @@ perm_choice01_D0 = [63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6
 perm_choice02 = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32]
 # Permutation choice inverse01 is the inverse initial permutation of the encryption keys, used for decryption
 perm_choice_inverse01 = [57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4]
-# Permutation choice 2 inverse is the inverse of permutation choice 2 used in the encryption algorythm
-perm_choice_inverse02 = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32]
 # The expansion permutation for increasing Rn from 32 bits to 48
 expansion = [32, 1, 2, 3, 4, 5, 4, 5, 6, 7, 8, 9, 8, 9, 10, 11, 12, 13, 12, 13, 14, 15, 16, 17, 16, 17, 18, 19, 20, 21, 20, 21, 22, 23, 24, 25, 24, 25, 26, 27, 28, 29, 28, 29, 30, 31, 32, 1]
 
@@ -108,7 +106,11 @@ def permute(text, permutation):
     new_Text = ""
     for bit in permutation:
         new_Text += text[bit-1]
+<<<<<<< HEAD
         print(len(new_Text), " - ", new_Text)
+=======
+        print(new_Text)
+>>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
     return new_Text
 
 
@@ -204,26 +206,39 @@ def decryptDES0(ciphertext, decryption_key):
         ciphertext += "0"*(8-len(ciphertext) % 8)
 
     # FP is an inverse of itself, so the first permutation made is the inverse of the final permutation made when encrypting
-    print("Checkpoint 1")
+    
     ciphertext = permute(ciphertext, FP)
-
+    print("Checkpoint 1 - Permute ciphertext, FP")   
     # The Ciphertext is split into its left half and right half so we can reverse the Fiestel process
-    print("Checkpoint 2")
     old_Left, old_Right = split(ciphertext)
+    print("Checkpoint 2 - Split Ciphertext")
     # The decryption key is premuted with the inverse of perm_choice02 which is used during the encryption process
+<<<<<<< HEAD
     print("Checkpoint 3")
     print(len(decryption_key))
     print(len(perm_choice_inverse02))
 
+=======
+    
+    print("Decryption Key Length: ", len(decryption_key))
+    print("Decryption Key perm:   ", len(perm_choice02))
+>>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
     c0, d0 = split(decryption_key)
-
+    print("Checkpoint 3 - Split Key")
     # The Fiestel function in DES decryption is the same as when encrypting, but the keys are applied in reverse order
     for d in range(1, 17):
+<<<<<<< HEAD
         # c0 and d0 are split outside of the loop because for the first permutation there is no key shift, but every subsequent perm has a key shift
         operation_Key = permute(c0+d0, perm_choice_inverse02)  
+=======
+        print("Checkpoint ", d+3, " - c0+d0 len = ", len(c0+d0))
+        print(c0+d0)
+        print(perm_choice02)
+        operation_Key = permute(c0+d0, perm_choice02)
+>>>>>>> e45347cbb4e7bd81a2fe24cdbf70edc591345a1d
         new_Left = old_Right
 
-        print("Checkpoint ", d+3)
+        print("Checkpoint ", d+4, " - Permute c/d0, permutation choice 2 inverse round ", d)
         old_Right = permute(old_Right, expansion)
         sbox_input = binary_xor(old_Right, operation_Key)
         sbox_output = sbox_Permutation(sbox_input)
