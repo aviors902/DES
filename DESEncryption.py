@@ -210,6 +210,8 @@ def DES0(message, key, encryptOrDecrypt):
             readable_ciphertext += " " + final_permutation[i]
     return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
+
+# Implementing DES1 - DES encryption with a step removed - XOR with round key removed
 def DES1(message, key, encryptOrDecrypt):
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -250,6 +252,7 @@ def DES1(message, key, encryptOrDecrypt):
     return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 
+# Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
 def DES2(message, key, encryptOrDecrypt):
     inverse_Expansion = [2, 3, 4, 5, 8, 9, 10, 11, 14, 15, 16, 17, 20, 21, 22, 23, 26, 27, 28, 29, 32, 33, 34, 35, 38, 39, 40, 41, 44, 45, 46, 47]
     message = message.replace(" ", "")
@@ -291,6 +294,7 @@ def DES2(message, key, encryptOrDecrypt):
     return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 
+# Implementing DES3 - No Permutation P at the end of each Fiestel Box
 def DES3(message, key, encryptOrDecrypt):
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -331,10 +335,10 @@ def DES3(message, key, encryptOrDecrypt):
 
 
 def main():
-    # The plaintext message "0123456789ABCDEF", converted from hex to binary
+    # The plaintext message "01 23 45 67 89 AB CD EF", converted from hex to binary
     m = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
     m1 = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111"
-    # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
+    # The initial encryption Key "13 34 57 79 9B BC DF F1" in Hex, converted to Binary
     key1 = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
     # Implementing DES0 - The Standard DES encryption process with zero changes
