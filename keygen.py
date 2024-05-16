@@ -13,11 +13,10 @@ def permute(text, permutation):
     for bit in permutation:
         new_text += text[bit - 1]
     return new_text
-def rotate(text, v, direction):
-    if direction == 'l':
-        return text[v:] + text[:v]
-    else:  # direction == 'r'
-        return text[-v:] + text[:-v]
+def rotate(text, v):
+    return text[v:] + text[:v]
+
+    
 def insert_odd_parity_bit(key_56_bit):
     def odd_parity(bits):
         return '1' if bits.count('1') % 2 == 0 else '0'
@@ -30,19 +29,15 @@ def insert_odd_parity_bit(key_56_bit):
         key_64_bit.append(parity_bit)
     return ''.join(key_64_bit)
 
-def keygen(key, type):
+# Function responsible for generating the keys to be used in the fiestel squares 
+def keygen(key, methodType):
     key = key.replace(" ", "")
-    keyPlus = permute(key, perm_choice01)
-    c1, d1 = split(keyPlus)
+    keyPlus = permute(key, perm_choice01)                       # Permutes the keys based on PC1, this ignores all the parity bits included in the string
+    c1, d1 = split(keyPlus)                                     # Splitting the key into 2 28-bit halves
     keys = [None] * 16
-    if type == "encrypt":
-        s = 'l'
-    else:
-        if type == "decrypt":
-            s = 'r'
     for k in range(0, 16):
-        c1 = rotate(c1, key_shifts[k], s)
-        d1 = rotate(d1, key_shifts[k], s)
+        c1 = rotate(c1, key_shifts[k])
+        d1 = rotate(d1, key_shifts[k])
         key = permute((c1+d1), perm_choice02)
         keys[k] = key
     no_Parity_Key = c1+d1
@@ -54,15 +49,15 @@ def keygen(key, type):
             readable_Key += parity_Key[j]
         else: 
             readable_Key += " " + parity_Key[j]
-    return keys, readable_Key
+    if methodType == "encrypt":
+        return keys
+    else:
+        if methodType == "decrypt":
+            keys.reverse()
+            return keys
 
-keys, readable_key = keygen(initial_key, 'encrypt')
-keys2, readable_key2 = keygen(readable_key, 'decrypt')
-keys2.reverse()
+keys = keygen(initial_key, 'encrypt')
+keys2 = keygen(initial_key, 'decrypt')
 for i in range(len(keys)):
     print(f"Round {i}, Encryption: {keys[i]}")
     print(f"Round {i}, Decryption: {keys2[i]}")
-
-print()
-print(initial_key)
-print(readable_key)
