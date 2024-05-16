@@ -353,12 +353,21 @@ def main():
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
     ciphertext3 = DES3(m, key1, 'encrypt')
     decrypted_m_3 = DES3(ciphertext3, key1, 'decrypt')
-
-    print(m)
-    print(decrypted_m_0)
-    print(decrypted_m_1)
-    print(decrypted_m_2)
-    print(decrypted_m_3)
+    print("---------------------------------------------------------------------------")
+    print("Plaintext: ", m)
+    print()
+    print("DES0 Encrypted Message: ", ciphertext0)
+    print("DES0 Decrypted Message: ", decrypted_m_0)
+    print()
+    print("DES1 Encrypted Message: ", ciphertext1)
+    print("DES1 Decrypted Message: ", decrypted_m_1)
+    print()
+    print("DES2 Encrypted Message: ", ciphertext2)
+    print("DES2 Decrypted Message: ", decrypted_m_2)
+    print()
+    print("DES3 Encrypted Message: ", ciphertext3)
+    print("DES3 Decrypted Message: ", decrypted_m_3)
+    print("---------------------------------------------------------------------------")
 
 if __name__ == "__main__":
     main()
