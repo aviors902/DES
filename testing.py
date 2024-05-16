@@ -132,7 +132,7 @@ def binary_xor(bin_str1, bin_str2):
     result_bin_str = result_bin_str.zfill(max_len)                                      # Pad the output with zeros to ensure the length matches the longer input string    
     return result_bin_str
 
-# A function used to turn a 56 bit key into a 64 bit key with odd-bit parity
+# Takes a given 56-bit key and returns it as a 64-bit key with each 8th-bit as an odd-parity-bit 
 def insert_odd_parity_bit(key_56_bit):
     def odd_parity(bits):
         return '1' if bits.count('1') % 2 == 0 else '0'
@@ -145,6 +145,34 @@ def insert_odd_parity_bit(key_56_bit):
         key_64_bit.append(parity_bit)
     return ''.join(key_64_bit)
 
+# The function used to generate the 16 keys used in the fiestel squares both when encrypting and decrypting
+def keygen(key, type):
+    key = key.replace(" ", "")
+    keyPlus = permute(key, perm_choice01)
+    c1, d1 = split(keyPlus)
+    keys = [None] * 16
+    if type == "encrypt":
+        s = 'l'
+    else:
+        if type == "decrypt":
+            s = 'r'
+    for k in range(0, 16):
+        c1 = rotate(c1, key_shifts[k], s)
+        d1 = rotate(d1, key_shifts[k], s)
+        key = permute((c1+d1), perm_choice02)
+        keys[k] = key
+    no_Parity_Key = c1+d1
+    parity_Key = insert_odd_parity_bit(no_Parity_Key)
+    readable_Key = ""
+    # Breaking the key into readable 8-bit chunks
+    for j in range(0, 64):
+        if j % 8 != 0 and j > 0:
+            readable_Key += parity_Key[j]
+        else: 
+            readable_Key += " " + parity_Key[j]
+    return keys, readable_Key
+
+# The Full function DES0 is the complete DES encryption process with no steps omitted or modified
 def encryptDES0(plaintext, key):
     plaintext = plaintext.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -155,16 +183,7 @@ def encryptDES0(plaintext, key):
     ciphertext = permute(plaintext, IP)
     old_Left, old_Right = split(ciphertext)
 
-    key = key.replace(" ", "")
-    keyPlus = permute(key, perm_choice01)
-    c1, d1 = split(keyPlus)
-  
-    keys = [None] * 16
-    for k in range(0, 16):
-        c1 = rotate(c1, key_shifts[k], 'l')
-        d1 = rotate(d1, key_shifts[k], 'l')
-        key = permute((c1+d1), perm_choice02)
-        keys[k] = key
+    keys, decryption_Key = keygen(key, "encrypt")
 
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
@@ -197,19 +216,7 @@ def encryptDES0(plaintext, key):
         else: 
             readable_ciphertext += " " + final_permutation[i]
 
-    # Converting the 56 bit key into a 64 bit key by adding an odd-parity-bit after every 7th bit (bit 8 will be the parity bit)
-    no_Parity_Key = c1+d1
-    parity_Key = insert_odd_parity_bit(no_Parity_Key)
-    readable_Key = ""
-    # Breaking the key into readable 8-bit chunks
-    for j in range(0, 64):
-        if j % 8 != 0 and j > 0:
-            readable_Key += parity_Key[j]
-        else: 
-            readable_Key += " " + parity_Key[j]
-
-
-    return readable_ciphertext, readable_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, decryption_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 # The decryption process for standard DES encryption
 def decryptDES0(ciphertext, key):
@@ -222,16 +229,8 @@ def decryptDES0(ciphertext, key):
     ciphertext = permute(ciphertext, IP)
     old_Left, old_Right = split(ciphertext)
 
-    key = key.replace(" ", "")
-    keyPlus = permute(key, perm_choice01)
-    c1, d1 = split(keyPlus)
-
-    keys = [None] * 16
-    for k in range(0, 16):
-        c1 = rotate(c1, key_shifts[k], 'l')
-        d1 = rotate(d1, key_shifts[k], 'l')
-        key = permute((c1+d1), perm_choice02)
-        keys[k] = key
+    # Generating the 16 keys used in the Fiestel squares
+    keys, encryption_key = keygen(key, "decrypt")
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
         #print(n)                                                                       #Debugging Print statement - Just used to indicate which iteration is being performed
@@ -261,18 +260,8 @@ def decryptDES0(ciphertext, key):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    # Converting the 56 bit key into a 64 bit key by adding an odd-parity-bit after every 7th bit (bit 8 will be the parity bit)
-    no_Parity_Key = c1+d1
-    parity_Key = insert_odd_parity_bit(no_Parity_Key)
-    readable_Key = ""
-    # Breaking the key into readable 8-bit chunks
-    for j in range(0, 64):
-        if j % 8 != 0 and j > 0:
-            readable_Key += parity_Key[j]
-        else: 
-            readable_Key += " " + parity_Key[j]
 
-    return readable_ciphertext, readable_Key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, encryption_key                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 
 
