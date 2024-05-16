@@ -220,7 +220,7 @@ def main():
     key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
     ciphertext = DES0(plaintext, key, 'encrypt')
-    decrypted_Text = DES0(plaintext, key, 'decrypt')
+    decrypted_Text = DES0(ciphertext, key, 'decrypt')
 
     print("Plaintext:       ", plaintext)
     print("Decrypted text: ", decrypted_Text)
