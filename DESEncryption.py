@@ -295,12 +295,15 @@ def main():
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
     key1 = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
+    # Implementing DES0 - The Standard DES encryption process with zero changes
     ciphertext0 = DES0(m1, key1, 'encrypt')
     decrypted_m1_0 = DES0(ciphertext0, key1, 'decrypt')
-
+    # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
     ciphertext1 = DES1(m1, key1, 'encrypt')
     decrypted_m1_1 = DES1(ciphertext1, key1, 'decrypt')
 
+
+    # Implementing DES3 - No Permutation P at the end of each Fiestel Box
     ciphertext3 = DES3(m1, key1, 'encrypt')
     decrypted_m1_3 = DES3(ciphertext3, key1, 'decrypt')
 
