@@ -184,7 +184,6 @@ def DES0(plaintext, key, encryptOrDecrypt):
 
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        #print(n)                                                                       # Debugging Print statement - Just used to indicate which iteration is being performed
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
@@ -210,7 +209,6 @@ def DES0(plaintext, key, encryptOrDecrypt):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-
     return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
 
 
@@ -226,7 +224,6 @@ def main():
 
     print("Plaintext:       ", plaintext)
     print("Decrypted text: ", decrypted_Text)
-    print("Encryption Key:  ", key)
 
 if __name__ == "__main__":
     main()
