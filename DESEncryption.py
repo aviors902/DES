@@ -144,8 +144,8 @@ def insert_odd_parity_bit(key_56_bit):
 # Function responsible for generating the keys to be used in the fiestel squares 
 def keygen(key, methodType):
     key = key.replace(" ", "")
-    keyPlus = permute(key, perm_choice01)                       # Permutes the keys based on PC1, this ignores all the parity bits included in the string
-    c1, d1 = split(keyPlus)                                     # Splitting the key into 2 28-bit halves
+    keyPlus = permute(key, perm_choice01)                                               # Permutes the keys based on PC1, this ignores all the parity bits included in the string
+    c1, d1 = split(keyPlus)                                                             # Splitting the key into 2 28-bit halves
     keys = [None] * 16
     for k in range(0, 16):
         c1 = rotate(c1, key_shifts[k])
