@@ -170,14 +170,14 @@ def keygen(key, methodType):
 
 
 # The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified
-def DES0(plaintext, key, encryptOrDecrypt):
-    plaintext = plaintext.replace(" ", "")
+def DES0(message, key, encryptOrDecrypt):
+    message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
-    if len(plaintext) % 8 != 0:
-        plaintext += "0"*(8-len(plaintext) % 8)
+    if len(message) % 8 != 0:
+        message += "0"*(8-len(message) % 8)
 
     # Split the plaintext into left and right halves
-    ciphertext = permute(plaintext, IP)
+    ciphertext = permute(message, IP)
     old_Left, old_Right = split(ciphertext)
 
     keys = keygen(key, encryptOrDecrypt)
@@ -199,7 +199,83 @@ def DES0(plaintext, key, encryptOrDecrypt):
         # Update all variables for the next iteration of the loop
         old_Left = new_Left
         old_Right = new_Right
-    
+    # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
+    final_permutation = permute(new_Right + new_Left, FP)
+    readable_ciphertext = ""
+    # A small loop just breaking the binary string into 8-bit sections for easier reading
+    for i in range(len(final_permutation)):
+        if i % 8 != 0 and i > 0:
+            readable_ciphertext += final_permutation[i]
+        else: 
+            readable_ciphertext += " " + final_permutation[i]
+    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+
+def DES1(message, key, encryptOrDecrypt):
+    message = message.replace(" ", "")
+    #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
+    if len(message) % 8 != 0:
+        message += "0"*(8-len(message) % 8)
+
+    # Split the plaintext into left and right halves
+    message = permute(message, IP)
+    old_Left, old_Right = split(message)
+
+    keys = keygen(key, encryptOrDecrypt)
+
+    # This for loop is the 17 Fiestel rounds taken in DES encryption
+    for k in range(1, 17):
+        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
+        new_Left = old_Right
+        # Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
+        old_Right = permute(old_Right, expansion)
+        # In DES0, the sbox_Input would be old_Right XOR Round Key. DES1 is to show the difference in the encryption without the XOR
+        sbox_input = old_Right
+        sbox_output = sbox_Permutation(sbox_input)
+        # p is the final permutation of the right hand side before XORing it with the old Left hand side
+        p = permute(sbox_output, permutation_p)
+        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the permuted s-box function output
+        new_Right = binary_xor(old_Left, p)
+        # Update all variables for the next iteration of the loop
+        old_Left = new_Left
+        old_Right = new_Right
+    # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
+    final_permutation = permute(new_Right + new_Left, FP)
+    readable_ciphertext = ""
+    # A small loop just breaking the binary string into 8-bit sections for easier reading
+    for i in range(len(final_permutation)):
+        if i % 8 != 0 and i > 0:
+            readable_ciphertext += final_permutation[i]
+        else: 
+            readable_ciphertext += " " + final_permutation[i]
+    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+
+def DES3(message, key, encryptOrDecrypt):
+    message = message.replace(" ", "")
+    #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
+    if len(message) % 8 != 0:
+        message += "0"*(8-len(message) % 8)
+
+    # Split the plaintext into left and right halves
+    ciphertext = permute(message, IP)
+    old_Left, old_Right = split(ciphertext)
+
+    keys = keygen(key, encryptOrDecrypt)
+
+    # This for loop is the 17 Fiestel rounds taken in DES encryption
+    for operation_key in keys:
+        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
+        new_Left = old_Right
+        #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
+        old_Right = permute(old_Right, expansion)
+        # Permuting based on the function of (L(n-1) XOR (Sbox Output of R(n-1) XOR Kn))
+        sbox_input = binary_xor(old_Right, operation_key)
+        #print("sbox inputs: ", sbox_input, " - size: ", len(sbox_input))               # Debugging print statement
+        sbox_output = sbox_Permutation(sbox_input)
+        # The new_Right (Rn) is formulated by performing an XOR operation on the old left (Ln-1) and the permuted s-box function output
+        new_Right = binary_xor(old_Left, sbox_output)
+        # Update all variables for the next iteration of the loop
+        old_Left = new_Left
+        old_Right = new_Right
     # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -214,16 +290,24 @@ def DES0(plaintext, key, encryptOrDecrypt):
 
 def main():
     # The plaintext message "0123456789ABCDEF", converted from hex to binary
-    plaintext = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
-
+    m = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
+    m1 = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111"
     # The initial encryption Key K = 133457799BBCDFF1 in Hex, converted to Binary
-    key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+    key1 = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
-    ciphertext = DES0(plaintext, key, 'encrypt')
-    decrypted_Text = DES0(ciphertext, key, 'decrypt')
+    ciphertext0 = DES0(m1, key1, 'encrypt')
+    decrypted_m1_0 = DES0(ciphertext0, key1, 'decrypt')
 
-    print("Plaintext:       ", plaintext)
-    print("Decrypted text: ", decrypted_Text)
+    ciphertext1 = DES1(m1, key1, 'encrypt')
+    decrypted_m1_1 = DES1(ciphertext1, key1, 'decrypt')
+
+    ciphertext3 = DES3(m1, key1, 'encrypt')
+    decrypted_m1_3 = DES3(ciphertext3, key1, 'decrypt')
+
+    print(m1)
+    print(decrypted_m1_0)
+    print(decrypted_m1_1)
+    print(decrypted_m1_3)
 
 if __name__ == "__main__":
     main()
