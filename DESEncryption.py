@@ -128,11 +128,11 @@ def binary_xor(bin_str1, bin_str2):
     result_bin_str = result_bin_str.zfill(max_len)                                      # Pad the output with zeros to ensure the length matches the longer input string    
     return result_bin_str
 
+
 # Takes a given 56-bit key and returns it as a 64-bit key with each 8th-bit as an odd-parity-bit 
 def insert_odd_parity_bit(key_56_bit):
     def odd_parity(bits):
         return '1' if bits.count('1') % 2 == 0 else '0'
-
     key_64_bit = []
     for i in range(0, 56, 7):
         seven_bits = key_56_bit[i:i+7]
@@ -140,6 +140,7 @@ def insert_odd_parity_bit(key_56_bit):
         key_64_bit.extend(seven_bits)
         key_64_bit.append(parity_bit)
     return ''.join(key_64_bit)
+
 
 # Function responsible for generating the keys to be used in the fiestel squares 
 def keygen(key, methodType):
