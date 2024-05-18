@@ -168,9 +168,19 @@ def keygen(key, methodType):
         if methodType == "decrypt":
             keys.reverse()
             return keys
+        
+
+# Used to compare the number of bits that differ between 2 binary string inputs (Assumes that the strings are the exact same length)
+def compareBitDifferences(input, permutation):
+    count = 0
+    for bit in range(len(permutation)):
+        if permutation[bit-1] != input[bit-1]:
+            count += 1
+    return count
 
 
-# The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified
+# The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified.
+# Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES0(message, key, encryptOrDecrypt):
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -182,7 +192,7 @@ def DES0(message, key, encryptOrDecrypt):
     old_Left, old_Right = split(ciphertext)
 
     keys = keygen(key, encryptOrDecrypt)
-
+    bitDifferences = []
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
@@ -200,6 +210,7 @@ def DES0(message, key, encryptOrDecrypt):
         # Update all variables for the next iteration of the loop
         old_Left = new_Left
         old_Right = new_Right
+        bitDifferences.append(compareBitDifferences(old_Left+old_Right, message))       # Counting the number of bits that differ from the original message
     # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -209,10 +220,11 @@ def DES0(message, key, encryptOrDecrypt):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, bitDifferences                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by an array indicating the number of bits that differ between the original message and the permutation of that message at that point in the fiestel loop
 
 
 # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
+# Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES1(message, key, encryptOrDecrypt):
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -220,13 +232,13 @@ def DES1(message, key, encryptOrDecrypt):
         message += "0"*(8-len(message) % 8)
 
     # Split the plaintext into left and right halves
-    message = permute(message, IP)
-    old_Left, old_Right = split(message)
+    ciphertext = permute(message, IP)
+    old_Left, old_Right = split(ciphertext)
 
     keys = keygen(key, encryptOrDecrypt)
-
-    # This for loop is the 17 Fiestel rounds taken in DES encryption
-    for k in range(1, 17):
+    bitDifferences = []
+    # This for loop is the 16 Fiestel rounds taken in DES encryption
+    for k in range(0, 16):
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         # Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
@@ -241,6 +253,7 @@ def DES1(message, key, encryptOrDecrypt):
         # Update all variables for the next iteration of the loop
         old_Left = new_Left
         old_Right = new_Right
+        bitDifferences.append(compareBitDifferences(old_Left+old_Right, message))       # Counting the number of bits that differ from the original message
     # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -250,10 +263,11 @@ def DES1(message, key, encryptOrDecrypt):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, bitDifferences                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by an array indicating the number of bits that differ between the original message and the permutation of that message at that point in the fiestel loop
 
 
 # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
+# Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES2(message, key, encryptOrDecrypt):
     inverse_Expansion = [2, 3, 4, 5, 8, 9, 10, 11, 14, 15, 16, 17, 20, 21, 22, 23, 26, 27, 28, 29, 32, 33, 34, 35, 38, 39, 40, 41, 44, 45, 46, 47]
     message = message.replace(" ", "")
@@ -266,8 +280,8 @@ def DES2(message, key, encryptOrDecrypt):
     old_Left, old_Right = split(ciphertext)
 
     keys = keygen(key, encryptOrDecrypt)
-
-    # This for loop is the 17 Fiestel rounds taken in DES encryption
+    bitDifferences = []
+    # This for loop is the 16 Fiestel rounds taken in DES encryption
     for operation_key in keys:
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
@@ -283,6 +297,7 @@ def DES2(message, key, encryptOrDecrypt):
         # Update all variables for the next iteration of the loop
         old_Left = new_Left
         old_Right = new_Right
+        bitDifferences.append(compareBitDifferences(old_Left+old_Right, message))       # Counting the number of bits that differ from the original message
     # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -292,10 +307,11 @@ def DES2(message, key, encryptOrDecrypt):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, bitDifferences                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by an array indicating the number of bits that differ between the original message and the permutation of that message at that point in the fiestel loop
 
 
 # Implementing DES3 - No Permutation P at the end of each Fiestel Box
+# Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES3(message, key, encryptOrDecrypt):
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
@@ -307,8 +323,8 @@ def DES3(message, key, encryptOrDecrypt):
     old_Left, old_Right = split(ciphertext)
 
     keys = keygen(key, encryptOrDecrypt)
-
-    # This for loop is the 17 Fiestel rounds taken in DES encryption
+    bitDifferences = []
+    # This for loop is the 16 Fiestel rounds taken in DES encryption
     for operation_key in keys:
         # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
@@ -323,6 +339,7 @@ def DES3(message, key, encryptOrDecrypt):
         # Update all variables for the next iteration of the loop
         old_Left = new_Left
         old_Right = new_Right
+        bitDifferences.append(compareBitDifferences(old_Left+old_Right, message))       # Counting the number of bits that differ from the original message
     # After 16 rounds of permutations, the final permutation FP is performed - Right and Left are swapped one final time
     final_permutation = permute(new_Right + new_Left, FP)
     readable_ciphertext = ""
@@ -332,7 +349,7 @@ def DES3(message, key, encryptOrDecrypt):
             readable_ciphertext += final_permutation[i]
         else: 
             readable_ciphertext += " " + final_permutation[i]
-    return readable_ciphertext                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by the final encryption key used (So the text can be decrypted)
+    return readable_ciphertext, bitDifferences                                           # Returning a tuple of 2 objects: The Binary String containing the encrypted message, followed by an array indicating the number of bits that differ between the original message and the permutation of that message at that point in the fiestel loop
 
 
 def main():
@@ -343,17 +360,17 @@ def main():
     key1 = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
     # Implementing DES0 - The Standard DES encryption process with zero changes
-    ciphertext0 = DES0(m, key1, 'encrypt')
-    decrypted_m_0 = DES0(ciphertext0, key1, 'decrypt')
+    ciphertext0, encryptBitDifferences0 = DES0(m, key1, 'encrypt')
+    decrypted_m_0, decryptBitDifference0 = DES0(ciphertext0, key1, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
-    ciphertext1 = DES1(m, key1, 'encrypt')
-    decrypted_m_1 = DES1(ciphertext1, key1, 'decrypt')
+    ciphertext1, encryptBitDifferences1 = DES1(m, key1, 'encrypt')
+    decrypted_m_1, decryptBitDifference1 = DES1(ciphertext1, key1, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
-    ciphertext2 = DES2(m, key1, 'encrypt')
-    decrypted_m_2 = DES2(ciphertext2, key1, 'decrypt')
+    ciphertext2, encryptBitDifferences2 = DES2(m, key1, 'encrypt')
+    decrypted_m_2, decryptBitDifference2 = DES2(ciphertext2, key1, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
-    ciphertext3 = DES3(m, key1, 'encrypt')
-    decrypted_m_3 = DES3(ciphertext3, key1, 'decrypt')
+    ciphertext3, encryptBitDifferences3 = DES3(m, key1, 'encrypt')
+    decrypted_m_3, decryptBitDifference3 = DES3(ciphertext3, key1, 'decrypt')
     print("---------------------------------------------------------------------------")
     print("Plaintext: ", m)
     print()
