@@ -4,19 +4,7 @@ This is the README for the DES implementation created for COMP3260's second assi
 
 ## Execution
 
-### Encryption
-
-1. Open up a terminal in the directory of the proram
-2. Input the directory to a file you want to encrypt as an argument for the program `./main.py encryptme.txt` for example.
-3. Wait for the program to encrypt your file.
-4. The output will be displayed in the console window.
-
-### Decryption
-
-1. Open up a terminal in the directory of the proram
-2. Input the directory to a file you want to decrypt as the first argument for the program, adding in the -d flag before the file you want to decrypt `./main.py -d decryptme.txt` for example
-3. Wait for the program to decrypt your file.
-4. The output will be displayed in the console window.
+Input from assignment will automatically be used. Results of the avalance effect will be put into the console. The script performs encryption and decryption.
 
 ## References
 
