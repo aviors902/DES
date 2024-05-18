@@ -361,29 +361,56 @@ def main():
     k2 = "10010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 
     # Implementing DES0 - The Standard DES encryption process with zero changes
-    ciphertext0, encryptBitDifferences0 = DES0(p, k, 'encrypt')
-    decrypted_m_0, decryptBitDifference0 = DES0(ciphertext0, k, 'decrypt')
+    ciphertext10, encryptBitDifferences10 = DES0(p, k, 'encrypt')
+    decrypted_m_10, decryptBitDifference10 = DES0(ciphertext10, k, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
-    ciphertext1, encryptBitDifferences1 = DES1(p, k, 'encrypt')
-    decrypted_m_1, decryptBitDifference1 = DES1(ciphertext1, k, 'decrypt')
+    ciphertext11, encryptBitDifferences11 = DES1(p, k, 'encrypt')
+    decrypted_m_11, decryptBitDifference11 = DES1(ciphertext11, k, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
-    ciphertext2, encryptBitDifferences2 = DES2(p, k, 'encrypt')
-    decrypted_m_2, decryptBitDifference2 = DES2(ciphertext2, k, 'decrypt')
+    ciphertext12, encryptBitDifferences12 = DES2(p, k, 'encrypt')
+    decrypted_m_12, decryptBitDifference12 = DES2(ciphertext12, k, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
-    ciphertext3, encryptBitDifferences3 = DES3(p, k, 'encrypt')
-    decrypted_m_3, decryptBitDifference3 = DES3(ciphertext3, k, 'decrypt')
+    ciphertext13, encryptBitDifferences13 = DES3(p, k, 'encrypt')
+    decrypted_m_13, decryptBitDifference13 = DES3(ciphertext13, k, 'decrypt')
 
-    ciphertext00, encryptBitDifferences00 = DES0(p, k2, 'encrypt')
-    decrypted_m_00, decryptBitDifference00 = DES0(ciphertext0, k2, 'decrypt')
+    # Implementing DES0 - The Standard DES encryption process with zero changes
+    ciphertext20, encryptBitDifferences20 = DES0(p2, k, 'encrypt')
+    decrypted_m_20, decryptBitDifference20 = DES0(ciphertext20, k, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
-    ciphertext10, encryptBitDifferences01 = DES1(p, k2, 'encrypt')
-    decrypted_m_10, decryptBitDifference01 = DES1(ciphertext1, k2, 'decrypt')
+    ciphertext21, encryptBitDifferences21 = DES1(p2, k, 'encrypt')
+    decrypted_m_21, decryptBitDifference21 = DES1(ciphertext21, k, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
-    ciphertext20, encryptBitDifferences02 = DES2(p, k2, 'encrypt')
-    decrypted_m_20, decryptBitDifference02 = DES2(ciphertext2, k2, 'decrypt')
+    ciphertext22, encryptBitDifferences22 = DES2(p2, k, 'encrypt')
+    decrypted_m_22, decryptBitDifference22 = DES2(ciphertext22, k, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
-    ciphertext30, encryptBitDifferences03 = DES3(p, k2, 'encrypt')
-    decrypted_m_30, decryptBitDifference03 = DES3(ciphertext3, k2, 'decrypt')
+    ciphertext23, encryptBitDifferences23 = DES3(p2, k, 'encrypt')
+    decrypted_m_23, decryptBitDifference23 = DES3(ciphertext23, k, 'decrypt')
+
+    # Implementing DES0 - The Standard DES encryption process with zero changes
+    ciphertext30, encryptBitDifferences30 = DES0(p, k2, 'encrypt')
+    decrypted_m_30, decryptBitDifference30 = DES0(ciphertext30, k2, 'decrypt')
+    # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
+    ciphertext31, encryptBitDifferences31 = DES1(p, k2, 'encrypt')
+    decrypted_m_31, decryptBitDifference31 = DES1(ciphertext31, k2, 'decrypt')
+    # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
+    ciphertext32, encryptBitDifferences32 = DES2(p, k2, 'encrypt')
+    decrypted_m_32, decryptBitDifference32 = DES2(ciphertext32, k2, 'decrypt')
+    # Implementing DES3 - No Permutation P at the end of each Fiestel Box
+    ciphertext33, encryptBitDifferences33 = DES3(p, k2, 'encrypt')
+    decrypted_m_33, decryptBitDifference33 = DES3(ciphertext33, k2, 'decrypt')
+
+    # Implementing DES0 - The Standard DES encryption process with zero changes
+    ciphertext40, encryptBitDifferences40 = DES0(p2, k2, 'encrypt')
+    decrypted_m_40, decryptBitDifference40 = DES0(ciphertext40, k2, 'decrypt')
+    # Implementing DES1 - DES encryption with a step removed - XOR with round key removed
+    ciphertext41, encryptBitDifferences41 = DES1(p2, k2, 'encrypt')
+    decrypted_m_41, decryptBitDifference41 = DES1(ciphertext41, k2, 'decrypt')
+    # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box
+    ciphertext42, encryptBitDifferences42 = DES2(p2, k2, 'encrypt')
+    decrypted_m_42, decryptBitDifference42 = DES2(ciphertext42, k2, 'decrypt')
+    # Implementing DES3 - No Permutation P at the end of each Fiestel Box
+    ciphertext43, encryptBitDifferences43 = DES3(p2, k2, 'encrypt')
+    decrypted_m_43, decryptBitDifference43 = DES3(ciphertext43, k2, 'decrypt')
 
     print("Avalanche Demonstration")
     print()
@@ -394,21 +421,45 @@ def main():
     print()
     print("-------------------------------------")
     print()
+    print("Encrypting p under k using DES0:")
+    print("Ciphertext c: ", ciphertext10)
+    print()
+    print("Encrypting p' under k using DES0:")
+    print("Ciphertext c':", ciphertext20)
+    print()
+    print("Encrypting p under k' using DES0:")
+    print("Ciphertext c: ", ciphertext30)
+    print()
+    print("Encrypting p' under k' using DES0:")
+    print("Ciphertext c':", ciphertext40)
+    print()
+    print("-------------------------------------")
+    print()
     print("Encryption Process")
     print("Demonstrating the difference in bits from plaintext to ciphertext in each round of Fiestel Squares")
-    print("Encrypting plaintext p under key k")
     print()
-    print("|-----------------------------------|")
-    print("| ROUND | DES0 | DES1 | DES2 | DES3 |")
-    print("|-----------------------------------|")
+    print(" -Encrypting plaintext p under key k          -Encrypting plaintext p' under k")
+    print("|-----------------------------------|        |-----------------------------------|")
+    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
+    print("|-----------------------------------|        |-----------------------------------|")
     for round in range(0, 10):
-        print(f"|   {round}   |  {encryptBitDifferences0[round]}  |  {encryptBitDifferences1[round]}  |  {encryptBitDifferences2[round]}  |  {encryptBitDifferences3[round]}  |")
-        print("|-----------------------------------|")
+        print(f"|   {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |        |   {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |")
+        print("|-----------------------------------|        |-----------------------------------|")
     for round in range(10, 17):
-        print(f"|  {round}   |  {encryptBitDifferences0[round]}  |  {encryptBitDifferences1[round]}  |  {encryptBitDifferences2[round]}  |  {encryptBitDifferences3[round]}  |")
-        print("|-----------------------------------|")
+        print(f"|  {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |        |  {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |")
+        print("|-----------------------------------|        |-----------------------------------|")
     print()
-    print(f"")
+    print
+    print(" -Encrypting plaintext p under key k'          -Encrypting plaintext p' under k'")
+    print("|-----------------------------------|        |-----------------------------------|")
+    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
+    print("|-----------------------------------|        |-----------------------------------|")
+    for round in range(0, 10):
+        print(f"|   {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |        |   {round}   |  {encryptBitDifferences40[round]}  |  {encryptBitDifferences41[round]}  |  {encryptBitDifferences42[round]}  |  {encryptBitDifferences43[round]}  |")
+        print("|-----------------------------------|        |-----------------------------------|")
+    for round in range(10, 17):
+        print(f"|  {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |        |  {round}   |  {encryptBitDifferences40[round]}  |  {encryptBitDifferences41[round]}  |  {encryptBitDifferences42[round]}  |  {encryptBitDifferences43[round]}  |")
+        print("|-----------------------------------|        |-----------------------------------|")
 
 
 if __name__ == "__main__":
