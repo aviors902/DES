@@ -422,9 +422,15 @@ def main():
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
     decrypted_m_33, decryptBitDifference33 = DES3(c33, k2, 'decrypt')
 
-    print("Avalanche Demonstration")
-    print()
-    print('''
+    print(f'''
+Avalanche Demonstration
+          
+Plaintext p  = 00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111
+Plaintext p' = 10000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111
+        
+Key k:{k})
+Key k':{k2})
+
 Ciphertexts generated using plaintext p under key k
 c00 = 10000101 11101000 00010011 01010100 00001111 00001010 10110100 00000101
 c01 = 01100001 01111011 00111010 00001100 11101000 11110000 01110001 00000000
@@ -448,70 +454,35 @@ c30 = 10010001 01111110 10111101 10110110 11010110 01100101 00000001 00111010
 c31 = 00101111 10100101 10010001 10001101 11000111 00001111 10110011 10110000
 c32 = 00011100 00010010 01101110 10001001 11100001 01100101 11101010 01010011
 c33 = 11100000 01001100 01100001 11100001 10011001 00000000 00000101 11110110
-        ''')
-    print()
-    print("Key k: ", k)
-    print("Key k':", k2)
-    print()
-    print("-------------------------------------")
-    print()
-    print("Decrypting p under k")
-    print("Using DES0 - Plaintext p: ", decrypted_m_00)
-    print("Using DES1 - Plaintext p: ", decrypted_m_01)
-    print("Using DES2 - Plaintext p: ", decrypted_m_02)
-    print("Using DES3 - Plaintext p: ", decrypted_m_03)
-    print()
-    print("Decrypting p' under k")
-    print("Using DES0 - Plaintext p':", decrypted_m_10)
-    print("Using DES1 - Plaintext p':", decrypted_m_11)
-    print("Using DES2 - Plaintext p':", decrypted_m_12)
-    print("Using DES3 - Plaintext p':", decrypted_m_13)
-    print()
-    print("Decrypting p under k'")
-    print("Using DES0 - Plaintext p: ", decrypted_m_20)
-    print("Using DES1 - Plaintext p: ", decrypted_m_21)    
-    print("Using DES2 - Plaintext p: ", decrypted_m_22)    
-    print("Using DES3 - Plaintext p: ", decrypted_m_23)
-    print()
-    print("Decrypting p' under k'")
-    print("Using DES0 - Plaintext p':", decrypted_m_30)
-    print("Using DES1 - Plaintext p':", decrypted_m_31)
-    print("Using DES2 - Plaintext p':", decrypted_m_32)
-    print("Using DES3 - Plaintext p':", decrypted_m_33)
-    print()
-    print("**********************************************************************************")    
-    print()
-    print("Decryption Process")
-    print("Demonstrating the difference in bits from plaintext to ciphertext in each round of Fiestel Squares using the 4 DES decryption variations")
-    print()
-    print("**********************************************************************************")    
-    print()
-    print("Bit difference between plaintext and ciphertext at each round of decrypting using DES0-3 ")
-    print(" -Decrypting plaintext p under key k          -Decrypting plaintext p' under k")
-    print("|-----------------------------------|        |-----------------------------------|")
-    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
-    print("|-----------------------------------|        |-----------------------------------|")
-    for round in range(0, 10):
-        print(f"|   {round}   |  {decryptBitDifference00[round]}  |  {decryptBitDifference01[round]}  |  {decryptBitDifference02[round]}  |  {decryptBitDifference03[round]}  |        |   {round}   |  {decryptBitDifference10[round]}  |  {decryptBitDifference11[round]}  |  {decryptBitDifference12[round]}  |  {decryptBitDifference13[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    for round in range(10, 17):
-        print(f"|  {round}   |  {decryptBitDifference00[round]}  |  {decryptBitDifference01[round]}  |  {decryptBitDifference02[round]}  |  {decryptBitDifference03[round]}  |        |  {round}   |  {decryptBitDifference10[round]}  |  {decryptBitDifference11[round]}  |  {decryptBitDifference12[round]}  |  {decryptBitDifference13[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    print()
-    print()
-    print(" -Decrypting plaintext p under key k'          -Decrypting plaintext p' under k'")
-    print("|-----------------------------------|        |-----------------------------------|")
-    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
-    print("|-----------------------------------|        |-----------------------------------|")
-    for round in range(0, 10):
-        print(f"|   {round}   |  {decryptBitDifference20[round]}  |  {decryptBitDifference21[round]}  |  {decryptBitDifference22[round]}  |  {decryptBitDifference23[round]}  |        |   {round}   |  {decryptBitDifference30[round]}  |  {decryptBitDifference31[round]}  |  {decryptBitDifference32[round]}  |  {decryptBitDifference33[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    for round in range(10, 17):
-        print(f"|  {round}   |  {decryptBitDifference20[round]}  |  {decryptBitDifference21[round]}  |  {decryptBitDifference22[round]}  |  {decryptBitDifference23[round]}  |        |  {round}   |  {decryptBitDifference30[round]}  |  {decryptBitDifference31[round]}  |  {decryptBitDifference32[round]}  |  {decryptBitDifference33[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    print()
-    print("**********************************************************************************")
 
+
+
+-------------------------------------
+
+Decrypting p under k
+Using DES0 - Plaintext p:{decrypted_m_00})
+Using DES1 - Plaintext p:{decrypted_m_01})
+Using DES2 - Plaintext p:{decrypted_m_02})
+Using DES3 - Plaintext p:{decrypted_m_03})
+
+Decrypting p' under k")
+Using DES0 - Plaintext p':{decrypted_m_10}
+Using DES1 - Plaintext p':{decrypted_m_11}
+Using DES2 - Plaintext p':{decrypted_m_12}
+Using DES3 - Plaintext p':{decrypted_m_13}
+
+Decrypting p under k'
+Using DES0 - Plaintext p:{decrypted_m_20}
+Using DES1 - Plaintext p:{decrypted_m_21}
+Using DES2 - Plaintext p:{decrypted_m_22}
+Using DES3 - Plaintext p:{decrypted_m_23}
+
+Decrypting p' under k'
+Using DES0 - Plaintext p':{decrypted_m_30}
+Using DES1 - Plaintext p':{decrypted_m_31}
+Using DES2 - Plaintext p':{decrypted_m_32}
+Using DES3 - Plaintext p':{decrypted_m_33}
+''')
 
 if __name__ == "__main__":
     main()

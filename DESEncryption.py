@@ -394,52 +394,53 @@ def main():
     ciphertext32, encryptBitDifferences32 = DES2(p2, k2, 'encrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box
     ciphertext33, encryptBitDifferences33 = DES3(p2, k2, 'encrypt')
+    print(f'''
+Avalanche Demonstration
 
-    print("Avalanche Demonstration")
-    print()
-    print("Plaintext p: ", p)
-    print("Plaintext p':", p2)
-    print("Key k: ", k)
-    print("Key k':", k2)
-    print()
-    print("-------------------------------------")
-    print()
-    print("Encrypting p under k")
-    print("Using DES0 - Ciphertext c: ", ciphertext00)
-    print("Using DES1 - Ciphertext c: ", ciphertext01)
-    print("Using DES2 - Ciphertext c: ", ciphertext02)
-    print("Using DES3 - Ciphertext c: ", ciphertext03)
-    print()
-    print("Encrypting p' under k")
-    print("Using DES0 - Ciphertext c':", ciphertext10)
-    print("Using DES1 - Ciphertext c':", ciphertext11)
-    print("Using DES2 - Ciphertext c':", ciphertext12)
-    print("Using DES3 - Ciphertext c':", ciphertext13)
-    print()
-    print("Encrypting p under k'")
-    print("Using DES0 - Ciphertext c: ", ciphertext20)
-    print("Using DES1 - Ciphertext c: ", ciphertext21)    
-    print("Using DES2 - Ciphertext c: ", ciphertext22)    
-    print("Using DES3 - Ciphertext c: ", ciphertext23)
-    print()
-    print("Encrypting p' under k'")
-    print("Using DES0 - Ciphertext c':", ciphertext30)
-    print("Using DES1 - Ciphertext c':", ciphertext31)
-    print("Using DES2 - Ciphertext c':", ciphertext32)
-    print("Using DES3 - Ciphertext c':", ciphertext33)
-    print()
-    print("**********************************************************************************")    
-    print()
-    print("Encryption Process")
-    print("Demonstrating the difference in bits from plaintext to ciphertext in each round of Fiestel Squares using the 4 DES encryption variations")
-    print()
-    print("**********************************************************************************")    
-    print()
-    print("Bit difference between plaintext and ciphertext at each round of encryption using DES0-3 ")
-    print(" -Encrypting plaintext p under key k          -Encrypting plaintext p' under k")
-    print("|-----------------------------------|        |-----------------------------------|")
-    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
-    print("|-----------------------------------|        |-----------------------------------|")
+Plaintext p:{p}
+Plaintext p':{p2}
+Key k:{k}
+Key k':{k2}
+        
+-----------------------------------------------------------------------------------
+        
+Encrypting p under k
+Using DES0 - Ciphertext c:{ciphertext00}
+Using DES1 - Ciphertext c:{ciphertext01}
+Using DES2 - Ciphertext c:{ciphertext02}
+Using DES3 - Ciphertext c:{ciphertext03}
+
+Encrypting p' under k
+Using DES0 - Ciphertext c':{ciphertext10}
+Using DES1 - Ciphertext c':{ciphertext11}
+Using DES2 - Ciphertext c':{ciphertext12}
+Using DES3 - Ciphertext c':{ciphertext13}
+
+Encrypting p under k'
+Using DES0 - Ciphertext c:{ciphertext20}
+Using DES1 - Ciphertext c:{ciphertext21}
+Using DES2 - Ciphertext c:{ciphertext22}
+Using DES3 - Ciphertext c:{ciphertext23}
+
+Encrypting p' under k'
+Using DES0 - Ciphertext c':{ciphertext30}
+Using DES1 - Ciphertext c':{ciphertext31}
+Using DES2 - Ciphertext c':{ciphertext32}
+Using DES3 - Ciphertext c':{ciphertext33}
+
+**********************************************************************************
+
+Encryption Process
+Demonstrating the difference in bits from plaintext to ciphertext in each round of Fiestel Squares using the 4 DES encryption variations
+        
+**********************************************************************************  
+        
+Bit difference between plaintext and ciphertext at each round of encryption using DES0-3 
+ -Encrypting plaintext p under key k          -Encrypting plaintext p' under k
+|-----------------------------------|        |-----------------------------------|
+| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |
+|-----------------------------------|        |-----------------------------------| ''')
+
     for round in range(0, 10):
         print(f"|   {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |   {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |")
         print("|-----------------------------------|        |-----------------------------------|")
@@ -447,11 +448,11 @@ def main():
         print(f"|  {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |  {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |")
         print("|-----------------------------------|        |-----------------------------------|")
     print()
-    print()
-    print(" -Encrypting plaintext p under key k'          -Encrypting plaintext p' under k'")
-    print("|-----------------------------------|        |-----------------------------------|")
-    print("| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |")
-    print("|-----------------------------------|        |-----------------------------------|")
+    print('''
+ -Encrypting plaintext p under key k'          -Encrypting plaintext p' under k'
+|-----------------------------------|        |-----------------------------------|
+| ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |
+|-----------------------------------|        |-----------------------------------| ''')
     for round in range(0, 10):
         print(f"|   {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |        |   {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |")
         print("|-----------------------------------|        |-----------------------------------|")
@@ -460,7 +461,6 @@ def main():
         print("|-----------------------------------|        |-----------------------------------|")
     print()
     print("**********************************************************************************")
-
 
 if __name__ == "__main__":
     main()
