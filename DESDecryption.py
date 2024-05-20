@@ -428,8 +428,8 @@ Avalanche Demonstration
 Plaintext p  ={p}
 Plaintext p' ={p2}
         
-Key k:{k})
-Key k':{k2})
+Key k:{k}
+Key k':{k2}
 
 Ciphertexts generated using plaintext p under key k
 c00 ={c00}
