@@ -1,4 +1,11 @@
+'''
+Authors: Mathieu Guisard c3256835
+         Jaret Posner c3355817
+        
+About This Program:
+The purpose of this program is to generate keys for the encryption and decryption methods (See DESEncyption and DESDecryption)
 
+'''
 # Given parameters
 initial_key = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
 key_shifts = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
