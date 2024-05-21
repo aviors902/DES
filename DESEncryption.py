@@ -1,6 +1,6 @@
 '''
 Authors: Mathieu Guisard c3256835
-         Jaret Posner
+         Jaret Posner c3355817
         
 About This Program:
 The purpose of this program is to demonstrate DES encryption and its implementation
@@ -196,7 +196,6 @@ def DES0(message, key, encryptOrDecrypt):
     keys = keygen(key, encryptOrDecrypt)
     # This for loop is the 17 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
@@ -240,7 +239,6 @@ def DES1(message, key, encryptOrDecrypt):
 
     # This for loop is the 16 Fiestel rounds taken in DES encryption
     for k in range(0, 16):
-        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         # Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
@@ -283,7 +281,6 @@ def DES2(message, key, encryptOrDecrypt):
     keys = keygen(key, encryptOrDecrypt)
     # This for loop is the 16 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
@@ -325,7 +322,6 @@ def DES3(message, key, encryptOrDecrypt):
     keys = keygen(key, encryptOrDecrypt)
     # This for loop is the 16 Fiestel rounds taken in DES encryption
     for operation_key in keys:
-        # Generating the new encryption key (Rotate c1 and d1 to the left by 1, join them and then permute)
         new_Left = old_Right
         #Expanding the old right from 32-bits to 48-bits to XOR it with the encryption key
         old_Right = permute(old_Right, expansion)
