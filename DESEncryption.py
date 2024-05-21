@@ -1,6 +1,6 @@
 '''
 Authors: Mathieu Guisard c3256835
-         Jaret Posner c3355817
+         Jaret Posner
         
 About This Program:
 The purpose of this program is to demonstrate DES encryption and its implementation
