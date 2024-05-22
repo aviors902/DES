@@ -432,28 +432,28 @@ Key k:{k}
 Key k':{k2}
 
 Ciphertexts generated using plaintext p under key k
-DES0 ={c00}
-DES1 ={c01}
-DES2 ={c02}
-DES3 ={c03}
+DES0 = {c00}
+DES1 = {c01}
+DES2 = {c02}
+DES3 = {c03}
 
 Ciphertexts generated using plaintext p' under key k
-DES0 ={c10}
-DES1 ={c11}
-DES2 ={c12}
-DES3 ={c13}
+DES0 = {c10}
+DES1 = {c11}
+DES2 = {c12}
+DES3 = {c13}
         
 Ciphertexts generated using plaintext p under key k'
-DES0 ={c20}
-DES1 ={c21}
-DES2 ={c22}
-DES3 ={c23}
+DES0 = {c20}
+DES1 = {c21}
+DES2 = {c22}
+DES3 = {c23}
 
 Ciphertexts generated using plaintext p' under key k'
-DES0 ={c30}
-DES1 ={c31}
-DES2 ={c32}
-DES3 ={c33}
+DES0 = {c30}
+DES1 = {c31}
+DES2 = {c32}
+DES3 = {c33}
 
 -------------------------------------
 
