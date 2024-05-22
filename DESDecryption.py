@@ -180,7 +180,7 @@ def compareBitDifferences(input, permutation):
             count += 1
     return count
 
-# - Read/Write Files
+# - Read/Write Files -
 
 # Used to ask the get the file from disk
 def readFilePrompt():
@@ -201,13 +201,32 @@ def readFile(path):
     # Open the file
     with open(path, 'r') as file:
         data = file.read()
-    # Validate the p,k,p',k' lengths are correct
+    # Remove the starting parts.
+    data = data.replace('p:','')
+    data = data.replace('p2:','')
+    data = data.replace('k:','')
+    data = data.replace('k2:','')
 
-    # Validate the plaintext/ciphertext input lines are the correct size
-
+    data = data.replace('c00:','') # DES 0, ciphertext 1
+    data = data.replace('c01:','') # DES 0, ciphertext 2
+    data = data.replace('c02:','') # DES 0, ciphertext 3
+    data = data.replace('c03:','') # DES 0, ciphertext 4
+    data = data.replace('c10:','') # DES 1, ciphertext 1
+    data = data.replace('c11:','') # DES 1, ciphertext 2
+    data = data.replace('c12:','') # DES 1, ciphertext 3
+    data = data.replace('c13:','') # DES 1, ciphertext 4
+    data = data.replace('c20:','') # DES 2, ciphertext 1
+    data = data.replace('c21:','') # DES 2, ciphertext 2
+    data = data.replace('c22:','') # DES 2, ciphertext 3
+    data = data.replace('c23:','') # DES 2, ciphertext 4
+    data = data.replace('c30:','') # DES 3, ciphertext 1
+    data = data.replace('c31:','') # DES 3, ciphertext 2
+    data = data.replace('c32:','') # DES 3, ciphertext 3
+    data = data.replace('c33:','') # DES 3, ciphertext 4
+    # Pack everything into an array, so its easier to work with.
+    data_as_array = data.splitlines()
     # Return the value
-    print(data)
-    return data
+    return data_as_array
 
 def writeFile():
     print("Writing to file \"decryption_output_2024-05-22-19-19-00\"")
@@ -391,144 +410,114 @@ def DES3(message, key, encryptOrDecrypt):
 
 
 def main():
-
-    # TODO: Get these variables reading from the file.
-    # TODO: Put these strings into a sample file, and add it to the repo for posterity's sake.
-    # The original plaintexts which were used 
-    p = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
-    p2 = "10000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111"
-    # The decryption keys
-    k = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    k2 = "10010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-
-    
-    # Ciphertexts generated using plaintext p under key k using the DES0 to 3 encryption algorithms
-    c00 = '10000101 11101000 00010011 01010100 00001111 00001010 10110100 00000101'
-    c01 = '01100001 01111011 00111010 00001100 11101000 11110000 01110001 00000000'
-    c02 = '11010110 11111111 01001110 10101001 01000000 11101001 11101110 11111010'
-    c03 = '00011100 00111011 10100100 01000011 10010110 11100100 01110111 10011101'
-
-    # Ciphertexts generated using plaintext p' under key k using the DES0 to 3 encryption algorithms
-    c10 = '00011011 11101100 11111010 00100011 00100110 10000010 10010101 10011011'
-    c11 = '00101111 10100101 10010001 10001101 11000111 00001111 10110011 10110000'
-    c12 = '10010110 11011111 11001110 10111001 01010001 11100000 11101110 11111011'
-    c13 = '00001101 11110111 10100110 01111000 00000100 10110010 10000111 10101100'
-    
-    # Ciphertexts generated using plaintext p under key k' using the DES0 to 3 encryption algorithms
-    c20 = '10000011 11101011 11001000 10000001 11111101 10101101 00101101 01011000'
-    c21 = '01100001 01111011 00111010 00001100 11101000 11110000 01110001 00000000'
-    c22 = '01011100 00110010 11101110 10011001 11110000 01101100 11101010 01010010'
-    c23 = '01110000 00010100 01100110 11000001 00111100 11100100 01011111 10111111'
-
-    # Ciphertexts generated using plaintext p' under key k' using the DES0 to 3 encryption algorithms
-    c30 = '10010001 01111110 10111101 10110110 11010110 01100101 00000001 00111010'
-    c31 = '00101111 10100101 10010001 10001101 11000111 00001111 10110011 10110000'
-    c32 = '00011100 00010010 01101110 10001001 11100001 01100101 11101010 01010011'
-    c33 = '11100000 01001100 01100001 11100001 10011001 00000000 00000101 11110110'
-
     # - File Reading -
 
     inputFile = readFilePrompt() # Get the input file...
-    message = readFile(inputFile) #... then assign it to the message.
+    data = readFile(inputFile) #... then assign it to the message.
 
+    k = data[2] # K value is on line 3, which is 2 in the array.
+    k2 = data[3] # K' value is on line 4. 3 in array.
+    
     # - DES Methods -
 
+    decryptedArray = [0] * 16 # Place to store the decrypted plaintext to pass it to the output
+
     # Implementing DES0 - The Standard DES encryption process with zero changes decrypting c00 with key k
-    decrypted_m_00, decryptBitDifference00 = DES0(c00, k, 'decrypt')
+    decryptedArray[0], decryptBitDifference00 = DES0(data[4], k, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed decrypting c01 with key k
-    decrypted_m_01, decryptBitDifference01 = DES1(c01, k, 'decrypt')
+    decryptedArray[1], decryptBitDifference01 = DES1(data[5], k, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box decrypting c02 with key k
-    decrypted_m_02, decryptBitDifference02 = DES2(c02, k, 'decrypt')
+    decryptedArray[2], decryptBitDifference02 = DES2(data[6], k, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box decrypting c03 with key k
-    decrypted_m_03, decryptBitDifference03 = DES3(c03, k, 'decrypt')
+    decryptedArray[3], decryptBitDifference03 = DES3(data[7], k, 'decrypt')
 
     # Implementing DES0 - The Standard DES encryption process with zero changes decrypting c10 with key k
-    decrypted_m_10, decryptBitDifference10 = DES0(c10, k, 'decrypt')
+    decryptedArray[4], decryptBitDifference10 = DES0(data[8], k, 'decrypt') 
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed decrypting c11 with key k
-    decrypted_m_11, decryptBitDifference11 = DES1(c11, k, 'decrypt')
+    decryptedArray[5], decryptBitDifference11 = DES1(data[9], k, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box decrypting c12 with key k
-    decrypted_m_12, decryptBitDifference12 = DES2(c12, k, 'decrypt')
+    decryptedArray[6], decryptBitDifference12 = DES2(data[10], k, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box decrypting c13 with key k
-    decrypted_m_13, decryptBitDifference13 = DES3(c13, k, 'decrypt')
+    decryptedArray[7], decryptBitDifference13 = DES3(data[11], k, 'decrypt')
 
     # Implementing DES0 - The Standard DES encryption process with zero changes decrypting c20 with key k'
-    decrypted_m_20, decryptBitDifference20 = DES0(c20, k2, 'decrypt')
+    decryptedArray[8], decryptBitDifference20 = DES0(data[12], k2, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed c21 with key k'
-    decrypted_m_21, decryptBitDifference21 = DES1(c21, k2, 'decrypt')
+    decryptedArray[9], decryptBitDifference21 = DES1(data[13], k2, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box c22 with key k'
-    decrypted_m_22, decryptBitDifference22 = DES2(c22, k2, 'decrypt')
+    decryptedArray[10], decryptBitDifference22 = DES2(data[14], k2, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box c23 with key k'
-    decrypted_m_23, decryptBitDifference23 = DES3(c23, k2, 'decrypt')
+    decryptedArray[11], decryptBitDifference23 = DES3(data[15], k2, 'decrypt')
 
     # Implementing DES0 - The Standard DES encryption process with zero changes c30 with key k'
-    decrypted_m_30, decryptBitDifference30 = DES0(c30, k2, 'decrypt')
+    decryptedArray[12], decryptBitDifference30 = DES0(data[16], k2, 'decrypt')
     # Implementing DES1 - DES encryption with a step removed - XOR with round key removed c31 with key k'
-    decrypted_m_31, decryptBitDifference31 = DES1(c31, k2, 'decrypt')
+    decryptedArray[13], decryptBitDifference31 = DES1(data[17], k2, 'decrypt')
     # Implementing DES2 - SBOX permutations have been removed and replaced with the inverse of the expansion box c32 with key k'
-    decrypted_m_32, decryptBitDifference32 = DES2(c32, k2, 'decrypt')
+    decryptedArray[14], decryptBitDifference32 = DES2(data[18], k2, 'decrypt')
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box c33 with key k'
-    decrypted_m_33, decryptBitDifference33 = DES3(c33, k2, 'decrypt')
+    decryptedArray[15], decryptBitDifference33 = DES3(data[19], k2, 'decrypt')
 
     #TODO: Write to file
-    # writeFile()
+    # writeFile(data,decryptedArray)
     print(f'''
 Avalanche Demonstration
           
-Plaintext p  = {p}
-Plaintext p' = {p2}
+Plaintext p  = {data[0]}
+Plaintext p' = {data[1]}
         
 Key k:  {k}
 Key k': {k2}
 
 Ciphertexts generated using plaintext p under key k
-DES0 = {c00}
-DES1 = {c01}
-DES2 = {c02}
-DES3 = {c03}
+DES0 = {data[4]}
+DES1 = {data[5]}
+DES2 = {data[6]}
+DES3 = {data[7]}
 
 Ciphertexts generated using plaintext p' under key k
-DES0 = {c10}
-DES1 = {c11}
-DES2 = {c12}
-DES3 = {c13}
+DES0 = {data[8]}
+DES1 = {data[9]}
+DES2 = {data[10]}
+DES3 = {data[11]}
         
 Ciphertexts generated using plaintext p under key k'
-DES0 = {c20}
-DES1 = {c21}
-DES2 = {c22}
-DES3 = {c23}
+DES0 = {data[12]}
+DES1 = {data[13]}
+DES2 = {data[14]}
+DES3 = {data[15]}
 
 Ciphertexts generated using plaintext p' under key k'
-DES0 = {c30}
-DES1 = {c31}
-DES2 = {c32}
-DES3 = {c33}
+DES0 = {data[16]}
+DES1 = {data[17]}
+DES2 = {data[18]}
+DES3 = {data[19]}
 
 -------------------------------------
 
 Decrypting p under k
-Using DES0 - Plaintext p:{decrypted_m_00})
-Using DES1 - Plaintext p:{decrypted_m_01})
-Using DES2 - Plaintext p:{decrypted_m_02})
-Using DES3 - Plaintext p:{decrypted_m_03})
+Using DES0 - Plaintext p:{decryptedArray[0]})
+Using DES1 - Plaintext p:{decryptedArray[1]})
+Using DES2 - Plaintext p:{decryptedArray[2]})
+Using DES3 - Plaintext p:{decryptedArray[3]})
 
-Decrypting p' under k")
-Using DES0 - Plaintext p':{decrypted_m_10}
-Using DES1 - Plaintext p':{decrypted_m_11}
-Using DES2 - Plaintext p':{decrypted_m_12}
-Using DES3 - Plaintext p':{decrypted_m_13}
+Decrypting p' under k
+Using DES0 - Plaintext p':{decryptedArray[4]}
+Using DES1 - Plaintext p':{decryptedArray[5]}
+Using DES2 - Plaintext p':{decryptedArray[6]}
+Using DES3 - Plaintext p':{decryptedArray[7]}
 
 Decrypting p under k'
-Using DES0 - Plaintext p:{decrypted_m_20}
-Using DES1 - Plaintext p:{decrypted_m_21}
-Using DES2 - Plaintext p:{decrypted_m_22}
-Using DES3 - Plaintext p:{decrypted_m_23}
+Using DES0 - Plaintext p:{decryptedArray[8]}
+Using DES1 - Plaintext p:{decryptedArray[9]}
+Using DES2 - Plaintext p:{decryptedArray[10]}
+Using DES3 - Plaintext p:{decryptedArray[11]}
 
 Decrypting p' under k'
-Using DES0 - Plaintext p':{decrypted_m_30}
-Using DES1 - Plaintext p':{decrypted_m_31}
-Using DES2 - Plaintext p':{decrypted_m_32}
-Using DES3 - Plaintext p':{decrypted_m_33}
+Using DES0 - Plaintext p':{decryptedArray[12]}
+Using DES1 - Plaintext p':{decryptedArray[13]}
+Using DES2 - Plaintext p':{decryptedArray[14]}
+Using DES3 - Plaintext p':{decryptedArray[15]}
 ''')
 
 if __name__ == "__main__":
@@ -540,3 +529,6 @@ if __name__ == "__main__":
 # [3] [https://www.w3schools.com/python/python_user_input.asp] <22 May 24>
 # [4] [https://stackoverflow.com/questions/73663/how-do-i-terminate-a-script] <22 May 24>
 # [5] [https://stackoverflow.com/a/8369345] <22 May 24>
+# [6] [https://stackoverflow.com/questions/37372603/how-to-remove-specific-substrings-from-a-set-of-strings-in-python] <22 May 24>
+# [7] [https://stackoverflow.com/questions/22042948/split-string-using-a-newline-delimiter-with-python] <22 May 24>
+# [8] [https://www.askpython.com/python/array/initialize-a-python-array] <2022Wed22May24>
