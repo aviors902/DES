@@ -9,6 +9,7 @@ The purpose of this program is to demonstrate DES encryption and its implementat
 
 import os.path # Used for file io
 import webbrowser # Used for opening file in the browser
+import datetime # Used so that new files don't overwrite old files, and are seperated by date.
 
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
@@ -231,8 +232,9 @@ def readFile(path):
     return data_as_array
 
 def writeFile(data, decryptedArray):
-    fileName = "decryption_output"
-    print("Writing to file \"" + fileName + "\"")
+    time = datetime.datetime.now()
+    fileName = f"decryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+    print(f"Writing to file \"{fileName}\"")
     # Write to file
     outputFile = open(fileName,"w")
     outputFile.write(f"""Avalanche Demonstration
@@ -295,7 +297,7 @@ Using DES3 - Plaintext p':{decryptedArray[15]}
 """)
     outputFile.close()
     # Tell user where file was outputted
-    print("File was outputted to \"fileName\"")
+    print(f"File was outputted to \"{fileName}\"")
     # Open it
     webbrowser.open(fileName)
 
