@@ -4,7 +4,13 @@ This is the README for the DES implementation created for COMP3260's second assi
 
 ## Execution
 
-Input from assignment will automatically be used. Results of the avalance effect will be put into the console. The script performs encryption and decryption.
+Start the program using python3.
+Both DESEncryption and DESDecryption will ask you for a file. Use full paths.
+The file should be .txt format, and laid out in the same way as the sample.txt file.
+
+Results of the avalance effect will be put into a file, and the filepath will be
+
+DESEncryption performs encryption and DESDecryption performs decryption.
 
 ## References
 
