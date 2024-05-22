@@ -7,7 +7,9 @@ The purpose of this program is to demonstrate DES encryption and its implementat
 
 '''
 
-import os.path
+import os.path # Used for file io
+import webbrowser # Used for opening file in the browser
+
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # The Final Permutation order for the plaintext - The inverse of the Initial Permutation
@@ -206,7 +208,7 @@ def readFile(path):
     data = data.replace('p2:','')
     data = data.replace('k:','')
     data = data.replace('k2:','')
-
+    # Remove the prefixes for the c parts
     data = data.replace('c00:','') # DES 0, ciphertext 1
     data = data.replace('c01:','') # DES 0, ciphertext 2
     data = data.replace('c02:','') # DES 0, ciphertext 3
@@ -228,12 +230,74 @@ def readFile(path):
     # Return the value
     return data_as_array
 
-def writeFile():
-    print("Writing to file \"decryption_output_2024-05-22-19-19-00\"")
+def writeFile(data, decryptedArray):
+    fileName = "decryption_output"
+    print("Writing to file \"" + fileName + "\"")
     # Write to file
+    outputFile = open(fileName,"w")
+    outputFile.write(f"""Avalanche Demonstration
+          
+Plaintext p  = {data[0]}
+Plaintext p' = {data[1]}
+        
+Key k:  {data[2]}
+Key k': {data[3]}
 
+Ciphertexts generated using plaintext p under key k
+DES0 = {data[4]}
+DES1 = {data[5]}
+DES2 = {data[6]}
+DES3 = {data[7]}
+
+Ciphertexts generated using plaintext p' under key k
+DES0 = {data[8]}
+DES1 = {data[9]}
+DES2 = {data[10]}
+DES3 = {data[11]}
+        
+Ciphertexts generated using plaintext p under key k'
+DES0 = {data[12]}
+DES1 = {data[13]}
+DES2 = {data[14]}
+DES3 = {data[15]}
+
+Ciphertexts generated using plaintext p' under key k'
+DES0 = {data[16]}
+DES1 = {data[17]}
+DES2 = {data[18]}
+DES3 = {data[19]}
+
+-------------------------------------
+
+Decrypting p under k
+Using DES0 - Plaintext p:{decryptedArray[0]})
+Using DES1 - Plaintext p:{decryptedArray[1]})
+Using DES2 - Plaintext p:{decryptedArray[2]})
+Using DES3 - Plaintext p:{decryptedArray[3]})
+
+Decrypting p' under k
+Using DES0 - Plaintext p':{decryptedArray[4]}
+Using DES1 - Plaintext p':{decryptedArray[5]}
+Using DES2 - Plaintext p':{decryptedArray[6]}
+Using DES3 - Plaintext p':{decryptedArray[7]}
+
+Decrypting p under k'
+Using DES0 - Plaintext p:{decryptedArray[8]}
+Using DES1 - Plaintext p:{decryptedArray[9]}
+Using DES2 - Plaintext p:{decryptedArray[10]}
+Using DES3 - Plaintext p:{decryptedArray[11]}
+
+Decrypting p' under k'
+Using DES0 - Plaintext p':{decryptedArray[12]}
+Using DES1 - Plaintext p':{decryptedArray[13]}
+Using DES2 - Plaintext p':{decryptedArray[14]}
+Using DES3 - Plaintext p':{decryptedArray[15]}
+""")
+    outputFile.close()
     # Tell user where file was outputted
-    print("File was outputted to \"\"")
+    print("File was outputted to \"fileName\"")
+    # Open it
+    webbrowser.open(fileName)
 
 # - DES Implementations -
 
@@ -459,67 +523,8 @@ def main():
     decryptedArray[15], decryptBitDifference33 = DES3(data[19], k2, 'decrypt')
 
     #TODO: Write to file
-    # writeFile(data,decryptedArray)
-    print(f'''
-Avalanche Demonstration
-          
-Plaintext p  = {data[0]}
-Plaintext p' = {data[1]}
-        
-Key k:  {k}
-Key k': {k2}
-
-Ciphertexts generated using plaintext p under key k
-DES0 = {data[4]}
-DES1 = {data[5]}
-DES2 = {data[6]}
-DES3 = {data[7]}
-
-Ciphertexts generated using plaintext p' under key k
-DES0 = {data[8]}
-DES1 = {data[9]}
-DES2 = {data[10]}
-DES3 = {data[11]}
-        
-Ciphertexts generated using plaintext p under key k'
-DES0 = {data[12]}
-DES1 = {data[13]}
-DES2 = {data[14]}
-DES3 = {data[15]}
-
-Ciphertexts generated using plaintext p' under key k'
-DES0 = {data[16]}
-DES1 = {data[17]}
-DES2 = {data[18]}
-DES3 = {data[19]}
-
--------------------------------------
-
-Decrypting p under k
-Using DES0 - Plaintext p:{decryptedArray[0]})
-Using DES1 - Plaintext p:{decryptedArray[1]})
-Using DES2 - Plaintext p:{decryptedArray[2]})
-Using DES3 - Plaintext p:{decryptedArray[3]})
-
-Decrypting p' under k
-Using DES0 - Plaintext p':{decryptedArray[4]}
-Using DES1 - Plaintext p':{decryptedArray[5]}
-Using DES2 - Plaintext p':{decryptedArray[6]}
-Using DES3 - Plaintext p':{decryptedArray[7]}
-
-Decrypting p under k'
-Using DES0 - Plaintext p:{decryptedArray[8]}
-Using DES1 - Plaintext p:{decryptedArray[9]}
-Using DES2 - Plaintext p:{decryptedArray[10]}
-Using DES3 - Plaintext p:{decryptedArray[11]}
-
-Decrypting p' under k'
-Using DES0 - Plaintext p':{decryptedArray[12]}
-Using DES1 - Plaintext p':{decryptedArray[13]}
-Using DES2 - Plaintext p':{decryptedArray[14]}
-Using DES3 - Plaintext p':{decryptedArray[15]}
-''')
-
+    writeFile(data,decryptedArray)
+    
 if __name__ == "__main__":
     main()
 
@@ -531,4 +536,8 @@ if __name__ == "__main__":
 # [5] [https://stackoverflow.com/a/8369345] <22 May 24>
 # [6] [https://stackoverflow.com/questions/37372603/how-to-remove-specific-substrings-from-a-set-of-strings-in-python] <22 May 24>
 # [7] [https://stackoverflow.com/questions/22042948/split-string-using-a-newline-delimiter-with-python] <22 May 24>
-# [8] [https://www.askpython.com/python/array/initialize-a-python-array] <2022Wed22May24>
+# [8] [https://www.askpython.com/python/array/initialize-a-python-array] <22 May 24>
+# [9] [https://www.w3schools.com/python/python_file_write.asp] <22 May 24>
+# [10] [https://stackoverflow.com/questions/6178154/open-a-text-file-using-notepad-as-a-help-file-in-python] <22 May 24>
+# [11] [https://sentry.io/answers/write-one-or-more-lines-to-a-file-in-python/] <22 May 24>
+# [12] [https://www.w3docs.com/snippets/python/how-can-i-print-variable-and-string-on-same-line-in-python.html] <22 May 24>
