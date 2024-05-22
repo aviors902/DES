@@ -6,6 +6,12 @@ About This Program:
 The purpose of this program is to demonstrate DES encryption and its implementation
 
 '''
+
+import os.path # Used for file io
+import webbrowser # Used for opening file in the browser
+import datetime # Used so that new files don't overwrite old files, and are seperated by date.
+
+
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # The Final Permutation order for the plaintext - The inverse of the Initial Permutation
@@ -178,6 +184,38 @@ def compareBitDifferences(input, permutation):
             count += 1
     return count
 
+def readFilePrompt():
+    print("Enter the path of the file you want to read from: ")
+    # Read user input
+    requestedFile = input("")
+    if (os.path.isfile(requestedFile) == False):
+        print("File path is not valid")
+        quit()
+    # Test if it is txt
+    if (requestedFile.endswith('.txt') == False):
+        print("File must be a .txt file format")
+        quit()
+    # Then return the path if it is valid
+    return requestedFile
+
+def readFile(path):
+    # Open the specified file Path
+    with open(path, 'r') as file:
+        data = file.read()
+    data_as_array = data.splitlines()
+    # Returns the array - index 0 is p, index 1 is p', index 2 is k and index 3 is k'
+    return data_as_array
+
+
+def writeFile(output):
+    time = datetime.datetime.now()
+    fileName = f"Encryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+    print(f"Writing to file \"{fileName}\"")
+    # Write to file
+    outputFile = open(fileName,"w")
+    outputFile.write(output)
+    return
+
 
 # The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified.
 # Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the Feistel squares
@@ -348,12 +386,13 @@ def DES3(message, key, encryptOrDecrypt):
 
 
 def main():
-    # The plaintext message "01 23 45 67 89 AB CD EF", converted from hex to binary
-    p = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
-    p2 = "10000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111"
-    # The initial encryption Key "13 34 57 79 9B BC DF F1" in Hex, converted to Binary
-    k = "00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
-    k2 = "10010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001"
+
+    filePath = readFilePrompt()
+    inputArray = readFile(filePath)
+    p = inputArray[0]
+    p2 = inputArray[1]
+    k = inputArray[2]
+    k2 = inputArray[3]
 
     # Implementing DES0 - The Standard DES encryption process with zero changes
     ciphertext00, encryptBitDifferences00 = DES0(p, k, 'encrypt')
@@ -390,39 +429,41 @@ def main():
     ciphertext32, encryptBitDifferences32 = DES2(p2, k2, 'encrypt')
     # Implementing DES3 - No Permutation P at the end of each Feistel Box
     ciphertext33, encryptBitDifferences33 = DES3(p2, k2, 'encrypt')
-    print(f'''
+
+    # Structuring the output to be written to a file
+    output = f'''
 Avalanche Demonstration
 
-Plaintext p:{p}
-Plaintext p':{p2}
-Key k:{k}
-Key k':{k2}
+Plaintext p: {p}
+Plaintext p': {p2}
+Key k: {k}
+Key k': {k2}
         
 -----------------------------------------------------------------------------------
         
 Encrypting p under k
-Using DES0 - Ciphertext c:{ciphertext00}
-Using DES1 - Ciphertext c:{ciphertext01}
-Using DES2 - Ciphertext c:{ciphertext02}
-Using DES3 - Ciphertext c:{ciphertext03}
+Using DES0 - Ciphertext c: {ciphertext00}
+Using DES1 - Ciphertext c: {ciphertext01}
+Using DES2 - Ciphertext c: {ciphertext02}
+Using DES3 - Ciphertext c: {ciphertext03}
 
 Encrypting p' under k
-Using DES0 - Ciphertext c':{ciphertext10}
-Using DES1 - Ciphertext c':{ciphertext11}
-Using DES2 - Ciphertext c':{ciphertext12}
-Using DES3 - Ciphertext c':{ciphertext13}
+Using DES0 - Ciphertext c': {ciphertext10}
+Using DES1 - Ciphertext c': {ciphertext11}
+Using DES2 - Ciphertext c': {ciphertext12}
+Using DES3 - Ciphertext c': {ciphertext13}
 
 Encrypting p under k'
-Using DES0 - Ciphertext c:{ciphertext20}
-Using DES1 - Ciphertext c:{ciphertext21}
-Using DES2 - Ciphertext c:{ciphertext22}
-Using DES3 - Ciphertext c:{ciphertext23}
+Using DES0 - Ciphertext c: {ciphertext20}
+Using DES1 - Ciphertext c: {ciphertext21}
+Using DES2 - Ciphertext c: {ciphertext22}
+Using DES3 - Ciphertext c: {ciphertext23}
 
 Encrypting p' under k'
-Using DES0 - Ciphertext c':{ciphertext30}
-Using DES1 - Ciphertext c':{ciphertext31}
-Using DES2 - Ciphertext c':{ciphertext32}
-Using DES3 - Ciphertext c':{ciphertext33}
+Using DES0 - Ciphertext c': {ciphertext30}
+Using DES1 - Ciphertext c': {ciphertext31}
+Using DES2 - Ciphertext c': {ciphertext32}
+Using DES3 - Ciphertext c': {ciphertext33}
 
 **********************************************************************************
 
@@ -435,28 +476,33 @@ Bit difference between plaintext and ciphertext at each round of encryption usin
  -Encrypting plaintext p under key k          -Encrypting plaintext p' under k
 |-----------------------------------|        |-----------------------------------|
 | ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |
-|-----------------------------------|        |-----------------------------------| ''')
+|-----------------------------------|        |-----------------------------------| 
+'''
 
     for round in range(0, 10):
-        print(f"|   {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |   {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
+        output += f"|   {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |   {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |\n"
+        output += "|-----------------------------------|        |-----------------------------------|\n"
     for round in range(10, 17):
-        print(f"|  {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |  {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    print()
-    print('''
- -Encrypting plaintext p under key k'          -Encrypting plaintext p' under k'
+        output += f"|  {round}   |  {encryptBitDifferences00[round]}  |  {encryptBitDifferences01[round]}  |  {encryptBitDifferences02[round]}  |  {encryptBitDifferences03[round]}  |        |  {round}   |  {encryptBitDifferences10[round]}  |  {encryptBitDifferences11[round]}  |  {encryptBitDifferences12[round]}  |  {encryptBitDifferences13[round]}  |\n"
+        output += "|-----------------------------------|        |-----------------------------------|\n"
+
+    output += '''
+-Encrypting plaintext p under key k'          -Encrypting plaintext p' under k'
 |-----------------------------------|        |-----------------------------------|
 | ROUND | DES0 | DES1 | DES2 | DES3 |        | ROUND | DES0 | DES1 | DES2 | DES3 |
-|-----------------------------------|        |-----------------------------------| ''')
+|-----------------------------------|        |-----------------------------------| 
+'''
+
     for round in range(0, 10):
-        print(f"|   {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |        |   {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
+        output += f"|   {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |        |   {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |\n"
+        output += "|-----------------------------------|        |-----------------------------------|\n"
     for round in range(10, 17):
-        print(f"|  {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |        |  {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |")
-        print("|-----------------------------------|        |-----------------------------------|")
-    print()
-    print("**********************************************************************************")
+        output += f"|  {round}   |  {encryptBitDifferences20[round]}  |  {encryptBitDifferences21[round]}  |  {encryptBitDifferences22[round]}  |  {encryptBitDifferences23[round]}  |        |  {round}   |  {encryptBitDifferences30[round]}  |  {encryptBitDifferences31[round]}  |  {encryptBitDifferences32[round]}  |  {encryptBitDifferences33[round]}  |\n"
+        output += "|-----------------------------------|        |-----------------------------------|\n"
+
+    output += "\n**********************************************************************************\n"
+
+    writeFile(output)
 
 if __name__ == "__main__":
     main()

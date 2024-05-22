@@ -233,7 +233,7 @@ def readFile(path):
 
 def writeFile(data, decryptedArray):
     time = datetime.datetime.now()
-    fileName = f"decryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+    fileName = f"Decryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
     print(f"Writing to file \"{fileName}\"")
     # Write to file
     outputFile = open(fileName,"w")
