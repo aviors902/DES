@@ -183,21 +183,24 @@ def compareBitDifferences(input, permutation):
 # - Read/Write Files
 
 # Used to ask the get the file from disk
-def readfilePrompt():
-    printf("Enter the path of the file you want to read from: ")
+def readFilePrompt():
+    print("Enter the path of the file you want to read from: ")
     # Read user input
-    requestedFile = raw_input()
-    #if (os.path.isfile(requestedFile)):
-    #    printf("File path is not valid")
+    requestedFile = input("")
+    if (os.path.isfile(requestedFile) == False):
+        print("File path is not valid")
+        exit
     # Test if it is txt
-
+    if (requestedFile.endswith('.txt') == False):
+        print("File must be a .txt file format")
+        exit
     # Then return the path if it is valid
     return requestedFile
 
 def readFile():
     printf("Implementing soon...")
 
-def outputResults(DES0,DES1,DES2,DES3):
+def outputResults(d00,d01,d02,d03,d10,d11,d12,d13,d20,d21,d22,d23,d30,d31,d32,d33,d34):
     printf("Implementing soon...")
 
 
@@ -206,8 +209,6 @@ def outputResults(DES0,DES1,DES2,DES3):
 # The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified.
 # Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES0(message, key, encryptOrDecrypt):
-    inputFile = readFilePrompt() # Get the input file...
-    #message = readFile(inputFile) #... then assign it to the message.
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(message) % 8 != 0:
@@ -378,6 +379,9 @@ def DES3(message, key, encryptOrDecrypt):
 
 
 def main():
+
+    # TODO: Get these variables reading from the file.
+    # TODO: Put these strings into a sample file, and add it to the repo for posterity's sake.
     # The original plaintexts which were used 
     p = "00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111"
     p2 = "10000001 00100011 01000101 01100111 10001001 10101011 11001101 11111111"
@@ -410,7 +414,12 @@ def main():
     c32 = '00011100 00010010 01101110 10001001 11100001 01100101 11101010 01010011'
     c33 = '11100000 01001100 01100001 11100001 10011001 00000000 00000101 11110110'
 
+    # - File Reading -
 
+    inputFile = readFilePrompt() # Get the input file...
+    #message = readFile(inputFile) #... then assign it to the message.
+
+    # - DES Methods -
 
     # Implementing DES0 - The Standard DES encryption process with zero changes decrypting c00 with key k
     decrypted_m_00, decryptBitDifference00 = DES0(c00, k, 'decrypt')
@@ -449,7 +458,7 @@ def main():
     decrypted_m_33, decryptBitDifference33 = DES3(c33, k2, 'decrypt')
 
     #TODO: make this output to a file, then output that file, instead of printing directly.
-    outputResults()
+    #outputResults() # Needs p,p2,k,k2, all of the c variables for the ciphertexts, and the decrypted variables for the outputs.
     print(f'''
 Avalanche Demonstration
           
@@ -512,3 +521,8 @@ Using DES3 - Plaintext p':{decrypted_m_33}
 
 if __name__ == "__main__":
     main()
+
+# Code references
+# [1] [https://stackoverflow.com/questions/82831/how-do-i-check-whether-a-file-exists-without-exceptions] <22 May 24>
+# [2] [https://stackoverflow.com/questions/70797/user-input-and-command-line-arguments} <22 May 24>
+# [3] [https://www.w3schools.com/python/python_user_input.asp] <22 May 24>
