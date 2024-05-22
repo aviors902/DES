@@ -6,6 +6,8 @@ About This Program:
 The purpose of this program is to demonstrate DES encryption and its implementation
 
 '''
+
+import os.path
 # The Initial Permutation order for the plaintext
 IP = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7]
 # The Final Permutation order for the plaintext - The inverse of the Initial Permutation
@@ -178,10 +180,34 @@ def compareBitDifferences(input, permutation):
             count += 1
     return count
 
+# - Read/Write Files
+
+# Used to ask the get the file from disk
+def readfilePrompt():
+    printf("Enter the path of the file you want to read from: ")
+    # Read user input
+    requestedFile = raw_input()
+    #if (os.path.isfile(requestedFile)):
+    #    printf("File path is not valid")
+    # Test if it is txt
+
+    # Then return the path if it is valid
+    return requestedFile
+
+def readFile():
+    printf("Implementing soon...")
+
+def outputResults(DES0,DES1,DES2,DES3):
+    printf("Implementing soon...")
+
+
+# - DES Implementations -
 
 # The Full function DES0 is the complete DES encryption and decryption process with no steps omitted or modified.
 # Returns the encrypted (or decrypted) message and an array containing the number of bits that differ from the input message at each stage in the fiestel squares
 def DES0(message, key, encryptOrDecrypt):
+    inputFile = readFilePrompt() # Get the input file...
+    #message = readFile(inputFile) #... then assign it to the message.
     message = message.replace(" ", "")
     #Padding the text to ensure it remains an exact multiple of 64 bits (8 bytes)
     if len(message) % 8 != 0:
@@ -422,6 +448,8 @@ def main():
     # Implementing DES3 - No Permutation P at the end of each Fiestel Box c33 with key k'
     decrypted_m_33, decryptBitDifference33 = DES3(c33, k2, 'decrypt')
 
+    #TODO: make this output to a file, then output that file, instead of printing directly.
+    outputResults()
     print(f'''
 Avalanche Demonstration
           
