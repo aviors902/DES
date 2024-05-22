@@ -187,7 +187,6 @@ def readFilePrompt():
     print("Enter the path of the file you want to read from: ")
     # Read user input
     requestedFile = input("")
-    print(requestedFile)
     if (os.path.isfile(requestedFile) == False):
         print("File path is not valid")
         quit()
@@ -198,20 +197,24 @@ def readFilePrompt():
     # Then return the path if it is valid
     return requestedFile
 
-def readFile():
-    # Validate the p,k,p',k' values are correct
+def readFile(path):
+    # Open the file
+    with open(path, 'r') as file:
+        data = file.read()
+    # Validate the p,k,p',k' lengths are correct
 
     # Validate the plaintext/ciphertext input lines are the correct size
 
     # Return the value
-    printf("Implementing soon...")
+    print(data)
+    return data
 
 def writeFile():
-    printf("Writing to file \"decryption_output_2024-05-22-19-19-00\"")
+    print("Writing to file \"decryption_output_2024-05-22-19-19-00\"")
     # Write to file
 
     # Tell user where file was outputted
-    printf("File was outputted to \"\"")
+    print("File was outputted to \"\"")
 
 # - DES Implementations -
 
@@ -426,7 +429,7 @@ def main():
     # - File Reading -
 
     inputFile = readFilePrompt() # Get the input file...
-    #message = readFile(inputFile) #... then assign it to the message.
+    message = readFile(inputFile) #... then assign it to the message.
 
     # - DES Methods -
 
@@ -536,3 +539,4 @@ if __name__ == "__main__":
 # [2] [https://stackoverflow.com/questions/70797/user-input-and-command-line-arguments} <22 May 24>
 # [3] [https://www.w3schools.com/python/python_user_input.asp] <22 May 24>
 # [4] [https://stackoverflow.com/questions/73663/how-do-i-terminate-a-script] <22 May 24>
+# [5] [https://stackoverflow.com/a/8369345] <22 May 24>
