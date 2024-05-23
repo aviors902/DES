@@ -7,6 +7,7 @@ This is the README for the DES implementation created for COMP3260's second assi
 Start the program using python3.
 Both DESEncryption and DESDecryption will ask you for a file. Use full FilePaths.
 The input file should be .txt format, laid out in the same way as the sample text files.
+View "Encryption_Sample.txt" & "Decryption_Sample.txt" for layout examples for input files
 
 Decryption needs line 1 and 2 to contain 64-bit blocks of binary plaintext to be encrypted
 Line 3 and 4 are 2 encryption keys to be used in the processes
