@@ -297,7 +297,7 @@ Using DES3 - Plaintext p':{decryptedArray[15]}
 """)
     outputFile.close()
     # Tell user where file was outputted
-    print(f"File was outputted to \"{fileName}\"")
+    print(f"Writing output to \"{fileName}\"")
     # Open it
     webbrowser.open(fileName)
 

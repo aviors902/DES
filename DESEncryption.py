@@ -210,7 +210,7 @@ def readFile(path):
 def writeFile(output):
     time = datetime.datetime.now()
     fileName = f"Encryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
-    print(f"Writing to file \"{fileName}\"")
+    print(f"Writing output to file \"{fileName}\"")
     # Write to file
     outputFile = open(fileName,"w")
     outputFile.write(output)
@@ -387,12 +387,12 @@ def DES3(message, key, encryptOrDecrypt):
 
 def main():
 
-    filePath = readFilePrompt()
-    inputArray = readFile(filePath)
-    p = inputArray[0]
-    p2 = inputArray[1]
-    k = inputArray[2]
-    k2 = inputArray[3]
+    filePath = readFilePrompt() # Get the input file
+    inputArray = readFile(filePath) # Parse the information in the file
+    p = inputArray[0]   # Plaintext 1
+    p2 = inputArray[1]  # Plaintext 2
+    k = inputArray[2]   # Encryption Key 1
+    k2 = inputArray[3]  # Encryption Key 2
 
     # Implementing DES0 - The Standard DES encryption process with zero changes
     ciphertext00, encryptBitDifferences00 = DES0(p, k, 'encrypt')
