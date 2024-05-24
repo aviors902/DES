@@ -209,7 +209,7 @@ def readFile(path):
 
 def writeFile(output):
     time = datetime.datetime.now()
-    fileName = f"Encryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}"
+    fileName = f"Encryption_output_{time.year}-{time.month}-{time.day}-{time.hour}-{time.minute}-{time.second}.txt"
     print(f"Writing output to \"{fileName}\"")
     # Write to file
     outputFile = open(fileName,"w")
