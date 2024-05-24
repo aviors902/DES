@@ -4,17 +4,17 @@ This is the README for the DES implementation created for COMP3260's second assi
 
 ## Execution
 
-Start the program using python3.
-Both DESEncryption and DESDecryption will ask you for a file. Use full FilePaths.
+Run the python scripts from the command line using "./PROGRAM-NAME.py"
+Both DESEncryption and DESDecryption will ask you for a filepaath. Use absolute filepaths
 The input file should be .txt format, laid out in the same way as the sample text files.
 View "Encryption_Sample.txt" & "Decryption_Sample.txt" for layout examples for input files
 
-Decryption needs line 1 and 2 to contain 64-bit blocks of binary plaintext to be encrypted
-Line 3 and 4 are 2 encryption keys to be used in the processes
+Decryption needs line 1 and 2 are 64-bit plaintext blocks (In binary)
+Line 3 and 4 are 64-bit encryption keys to be used in the processes (Also in binary)
 
-Results of the avalance effect will be put into an output file, and the filepath will be the process used, followed by the date and time the program was run
+Results of the programs will be put into an output file, and the input filepath will be the output file location File name will conside of Encryption or Decryption process, followed by the date and time the program was run
 
-DESEncryption performs encryption and DESDecryption performs decryption.
+DESEncryption displays the encryption process and DESDecryption displays the decryption process.
 
 ## References
 
